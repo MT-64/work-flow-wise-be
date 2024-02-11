@@ -1,0 +1,30 @@
+version: "3.9"
+
+name: "database"
+services:
+  api: 
+    image: work-flow-wise
+    environment: 
+      DATABASE_URL: "postgresql://local:password@localhost:5432/okr?schema=public"
+    build: 
+      context: .
+      dockerfile: Dockerfile 
+    ports: 
+      - "8000:8000"
+    depends_on: 
+      - postgres
+  postgres:
+    user: root
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: local
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: okr
+    ports:
+      - 5432:5432
+    volumes:
+      - './.data:/var/lib/postgresql/data'  
+    networks: 
+      - local 
+networks: 
+  local:
