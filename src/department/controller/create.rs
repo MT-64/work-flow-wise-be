@@ -19,15 +19,17 @@ use crate::{
   responses(
     (
       status = 201,
-      description = "Objective created",
+      description = "Department created",
       body = DepartmentResponse,
       example = json! (
         {
           "code": 201,
-          "message": "Created new objective successfully",
+          "message": "Created department sucessfully",
           "data": {
-            "createdAt": 1696932804946_i64,
-            "updatedAt": 1696932804946_i64
+            "id": "1w6ajp6l6gooi9g",
+            "organizeId": "GFI",
+            "managerId": "None",
+            "name": "VBI"
           },
           "error": ""
         }

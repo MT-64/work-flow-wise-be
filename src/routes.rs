@@ -1,8 +1,8 @@
 use axum::{extract::State, routing::options, Router};
 
 use crate::{
-    objectives::controller::obj_routes, response::WebResponse, state::AppState,
-    users::controller::user_routes, WebResult,
+    department::controller::department_routes, objectives::controller::obj_routes,
+    response::WebResponse, state::AppState, users::controller::user_routes, WebResult,
 };
 
 fn preflight() -> Router<AppState> {
@@ -17,6 +17,7 @@ pub fn routes() -> Router<AppState> {
         .merge(preflight())
         .merge(user_routes())
         .merge(obj_routes())
+        .merge(department_routes())
     // .merge(auth_routes())
     // .merge(folder_routes())
     // .merge(file_routes())

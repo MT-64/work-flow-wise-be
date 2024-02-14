@@ -11,7 +11,7 @@ department::select!(department_select {
 
 pub type DepartmentSelect = department_select::Data;
 
-#[derive(Serialize, Deserialize, ToSchema)]
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct DepartmentResponse {
     pub id: String,

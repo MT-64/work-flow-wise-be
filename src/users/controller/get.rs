@@ -103,9 +103,14 @@ pub fn get_users() -> Router<AppState> {
         if let Some(id) = id {
             filters.push(user::pk_user_id::equals(id));
         }
-        filters.push(user::first_name::equals(first_name));
 
-        filters.push(user::last_name::equals(last_name));
+        if let Some(first_name) = first_name {
+            filters.push(user::first_name::equals(Some(first_name)));
+        }
+
+        if let Some(last_name) = last_name {
+            filters.push(user::last_name::equals(Some(last_name)));
+        }
 
         if let Some(username) = username {
             filters.push(user::username::equals(username));

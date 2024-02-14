@@ -7,11 +7,14 @@ use crate::users::model::request::{
     CreateUserRequest, DeleteUserRequest, LoginRequest, UpdateUserRequest,
 };
 
+use crate::department::model::request::{CreateDepartmentRequest, UpdateDepartmentRequest};
 use crate::objectives::model::request::{CreateObjRequest, UpdateObjRequest};
 
+use crate::department::model::response::DepartmentResponse;
 use crate::objectives::model::response::ObjectiveResponse;
 use crate::users::model::response::UserResponse;
 
+use crate::department;
 use crate::objectives;
 use crate::users;
 
@@ -35,9 +38,14 @@ use crate::users;
       // Objective
       CreateObjRequest,
       UpdateObjRequest,
+      // Department
+      CreateDepartmentRequest,
+      UpdateDepartmentRequest,
+
       // Responses
       UserResponse,
-      ObjectiveResponse
+      ObjectiveResponse,
+      DepartmentResponse,
 
     )
   ),
@@ -59,6 +67,12 @@ use crate::users;
     objectives::controller::delete::delete_obj,
     objectives::controller::update::update_obj,
 
+    ////////// department
+    department::controller::get::get_department,
+    department::controller::get::get_departments,
+    department::controller::create::create_department,
+    department::controller::delete::delete_department,
+    department::controller::update::update_department,
 
   ),
   modifiers(

@@ -14,6 +14,8 @@ use routes::routes;
 use state::AppState;
 use std::{net::SocketAddr, sync::Arc};
 use tokio::net::TcpListener;
+use tracing::info;
+use tracing::Level;
 use users::service::UserService;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
@@ -36,6 +38,7 @@ pub type WebResult = std::result::Result<Response, ErrorResponse>;
 async fn main() {
     dotenv().ok();
     //   check_env();
+    tracing_subscriber::fmt().init();
 
     let client = PrismaClient::_builder()
         .build()

@@ -98,7 +98,8 @@ model UserInformation {
   location         		String?
   company          		String?
   bio              		String?
-  job_type         		String? year_of_experience 	Int?
+  job_type         		String? 
+  year_of_experience 	Int?
   industry         		String?
   birthday          	BigInt?
   organization      	String?

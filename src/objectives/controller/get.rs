@@ -73,7 +73,10 @@ pub fn get_objs() -> Router<AppState> {
             filters.push(objective::deadline::lt(DateTime::from_timestamp(deadline, 0).unwrap().fixed_offset()))
         }
 
-        filters.push(objective::status::equals(status));
+        if let Some(status) = status {
+            filters.push(objective::status::equals(Some(status)));
+        }
+
 
        if let Some(obj_type) = obj_type {
             let n_obj_type = match obj_type.trim() {
@@ -127,7 +130,7 @@ pub fn get_objs() -> Router<AppState> {
       example = json! (
         {
           "code": 200,
-          "message": "Get user by user id successfully",
+          "message": "Get objective by id successfully",
           "data": {
           },
           "error": ""
