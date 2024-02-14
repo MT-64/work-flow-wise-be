@@ -1,61 +1,70 @@
-use crate::prisma::objective;
 use chrono::Utc;
 use is_empty::IsEmpty;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 use validator::Validate;
 
-objective::select!(objective_select {
-    pk_objective_id
-    obj_type
+use crate::prisma::key_result;
+
+key_result::select!(keyresult_select {
+    pk_kr_id
+    objective_id
     name
     description
+    user_id
     target
+    metric
     progress
     status
+    deadline
     created_at
     updated_at
-    deadline
 });
 
-pub type ObjSelect = objective_select::Data;
+pub type KrSelect = keyresult_select::Data;
 
 #[derive(Serialize, Deserialize, ToSchema)]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "camelCase")]
-pub struct ObjectiveResponse {
-    pub obj_id: String,
-    pub obj_type: crate::prisma::ObjectiveType,
+pub struct KeyResultResponse {
+    pub keyresult_id: String,
+    pub objective_id: String,
+    pub user_id: String,
     pub name: String,
-    pub description: Option<String>,
+    pub description: String,
+    pub metric: String,
     pub target: String,
-    pub progress: Option<f64>,
+    pub progress: f64,
     pub status: bool,
     pub deadline: i64,
     pub created_at: i64,
     pub updated_at: i64,
 }
 
-impl From<ObjSelect> for ObjectiveResponse {
+impl From<KrSelect> for KeyResultResponse {
     fn from(
-        ObjSelect {
-            pk_objective_id,
-            obj_type,
+        KrSelect {
+            pk_kr_id,
+            objective_id,
             name,
             description,
+            user_id,
             target,
+            metric,
             progress,
             status,
             deadline,
             created_at,
             updated_at,
-        }: ObjSelect,
+        }: KrSelect,
     ) -> Self {
         Self {
-            obj_id: pk_objective_id,
-            obj_type,
+            keyresult_id: pk_kr_id,
+            objective_id,
+            user_id,
             name,
             description,
+            metric,
             target,
             progress,
             status,

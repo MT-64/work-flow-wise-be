@@ -81,7 +81,10 @@ pub fn update_obj() -> Router<AppState> {
         changes.push(objective::progress::set(progress));
 
         let updated_obj: ObjectiveResponse = obj_service.update_obj(obj_id, changes).await?.into();
-        Ok(WebResponse::ok("Update user successfully", updated_obj))
+        Ok(WebResponse::ok(
+            "Update objective successfully",
+            updated_obj,
+        ))
     }
     Router::new().route("/update/:obj_id", put(update_obj_handler))
 }

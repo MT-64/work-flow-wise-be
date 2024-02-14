@@ -3,7 +3,7 @@
 
 generator client {
   provider = "cargo prisma"
-  output = "../src/prisma.rs"
+  output   = "../src/prisma.rs"
 }
 
 datasource db {
@@ -24,47 +24,44 @@ enum Role {
   Manager
 }
 
-
 model User {
-  pk_user_id         String         @id @map("pk_user_id") // Assuming this is a generated ID
+  pk_user_id String @id @map("pk_user_id") // Assuming this is a generated ID
 
-  username 			 String @unique
-  email              String @unique
+  username String @unique
+  email    String @unique
 
   password           String
   department_id      String?
   organize_id        String?
-  pagination_id      Int            @default(autoincrement()) @unique @map("pagination_id")
+  pagination_id      Int      @unique @default(autoincrement()) @map("pagination_id")
   first_name         String?
   last_name          String?
-  gender             Gender         @default(Male)
-  role               Role           @default(Employee)
+  gender             Gender   @default(Male)
+  role               Role     @default(Employee)
   introduction_brief String?
   image              String?
-  total_credit       Int            @default(0)
-  is_deleted         Boolean        @default(false)
+  total_credit       Int      @default(0)
+  is_deleted         Boolean  @default(false)
   deleted_at         Int?
-  created_at         DateTime       @default(now())
-  updated_at         DateTime       @default(now())
+  created_at         DateTime @default(now())
+  updated_at         DateTime @default(now())
 
-//  department      Department? @relation(fields: [department_id], references: [pk_department_id])
-//  organize       Organize?    @relation(fields: [organize_id], references: [pk_organize_id])
-//  objectives      Objective[]  @relation(fields: [pk_user_id], references: [pk_objective_id])
-//  user_information UserInformation? @relation(fields: [pk_user_id], references: [pk_user_id])
+  //  department      Department? @relation(fields: [department_id], references: [pk_department_id])
+  //  organize       Organize?    @relation(fields: [organize_id], references: [pk_organize_id])
+  //  objectives      Objective[]  @relation(fields: [pk_user_id], references: [pk_objective_id])
+  //  user_information UserInformation? @relation(fields: [pk_user_id], references: [pk_user_id])
+  KeyResult KeyResult[]
 }
 
-
-
-
 model Department {
-  pk_department_id String @id @unique
-  organize_id     String
-  manager_id      String?
-  name            String  @unique
+  pk_department_id String  @id @unique
+  organize_id      String
+  manager_id       String?
+  name             String  @unique
 }
 
 model Organize {
-  pk_organize_id String @id @unique
+  pk_organize_id String  @id @unique
   owner_id       String?
   name           String  @unique
   address        String
@@ -72,16 +69,17 @@ model Organize {
 }
 
 model Objective {
-  pk_objective_id String @id @unique
+  pk_objective_id String         @id @unique
   obj_type        objective_type @default(Other)
   name            String
   description     String?
   target          String
-  progress        Float?    @default(0)
-  status          Boolean?
-  created_at      DateTime   @default(now())
-  updated_at      DateTime   @updatedAt
+  progress        Float?         @default(0)
+  status          Boolean	     @default(true)
+  created_at      DateTime       @default(now())
+  updated_at      DateTime       @updatedAt
   deadline        DateTime
+  KeyResult       KeyResult[]
 }
 
 enum objective_type {
@@ -93,29 +91,57 @@ enum objective_type {
 }
 
 model UserInformation {
-  pk_user_id       		String @id @unique
-  job_title        		String?
-  location         		String?
-  company          		String?
-  bio              		String?
-  job_type         		String? 
-  year_of_experience 	Int?
-  industry         		String?
-  birthday          	BigInt?
-  organization      	String?
-  education_level  		String?
-  education        		String?
-  social_link       	String[] 
+  pk_user_id         String   @id @unique
+  job_title          String?
+  location           String?
+  company            String?
+  bio                String?
+  job_type           String?
+  year_of_experience Int?
+  industry           String?
+  birthday           BigInt?
+  organization       String?
+  education_level    String?
+  education          String?
+  social_link        String[]
 }
 
 model OAuthStateStorage {
-  csrf_state       		String @id @unique
-  pkce_code_verifier 	String
+  csrf_state         String @id @unique
+  pkce_code_verifier String
 }
 
 model Notification {
-  pk_notification_id 	String @id @unique
-  user_id            	String
-  message          		String?
-  status           		Boolean @default(false)
+  pk_notification_id String  @id @unique
+  user_id            String
+  message            String?
+  status             Boolean @default(false)
+}
+
+model KeyResult {
+  pk_kr_id String @id @map("pk_kr_id")
+
+  objectiveId String
+  objective   Objective @relation(fields: [objectiveId], references: [pk_objective_id])
+
+  name String
+
+  description String
+
+  target String
+
+  progress Float @default(0)
+
+  status Boolean @default(true)
+
+  metric String
+
+  deadline DateTime
+
+  userId String
+  user   User   @relation(fields: [userId], references: [pk_user_id])
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
 }

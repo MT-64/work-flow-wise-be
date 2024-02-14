@@ -25,6 +25,7 @@ use crate::{
     ("objType" = inline(Option<String>), Query, description = "objective type"),
     ("createdAt" = inline(Option<i64>), Query, description = "Objective created at"),
     ("updatedAt" = inline(Option<i64>), Query, description = "Objective updated at"),
+    ("deadline" = inline(Option<i64>), Query, description = "Objective deadline"),
   ),
   responses(
     (
@@ -74,7 +75,7 @@ pub fn get_objs() -> Router<AppState> {
         }
 
         if let Some(status) = status {
-            filters.push(objective::status::equals(Some(status)));
+            filters.push(objective::status::equals(status));
         }
 
 

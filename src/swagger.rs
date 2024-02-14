@@ -8,13 +8,16 @@ use crate::users::model::request::{
 };
 
 use crate::department::model::request::{CreateDepartmentRequest, UpdateDepartmentRequest};
+use crate::key_result::model::request::{CreateKrRequest, UpdateKrRequest};
 use crate::objectives::model::request::{CreateObjRequest, UpdateObjRequest};
 
 use crate::department::model::response::DepartmentResponse;
+use crate::key_result::model::response::KeyResultResponse;
 use crate::objectives::model::response::ObjectiveResponse;
 use crate::users::model::response::UserResponse;
 
 use crate::department;
+use crate::key_result;
 use crate::objectives;
 use crate::users;
 
@@ -41,11 +44,15 @@ use crate::users;
       // Department
       CreateDepartmentRequest,
       UpdateDepartmentRequest,
+      //Keyresult
+      CreateKrRequest,
+      UpdateKrRequest,
 
       // Responses
       UserResponse,
       ObjectiveResponse,
       DepartmentResponse,
+      KeyResultResponse
 
     )
   ),
@@ -73,6 +80,14 @@ use crate::users;
     department::controller::create::create_department,
     department::controller::delete::delete_department,
     department::controller::update::update_department,
+
+    ////////// keyresult
+    key_result::controller::get::get_krs,
+    key_result::controller::get::get_kr,
+    key_result::controller::create::create_kr,
+    key_result::controller::delete::delete_kr,
+    key_result::controller::update::update_kr,
+
 
   ),
   modifiers(
