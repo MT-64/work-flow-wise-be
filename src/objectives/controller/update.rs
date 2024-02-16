@@ -52,6 +52,7 @@ pub fn update_obj() -> Router<AppState> {
         LoggedInUser(user): LoggedInUser,
         UpdateObjRequest {
             name,
+            period_id,
             description,
             target,
             progress,
@@ -68,6 +69,10 @@ pub fn update_obj() -> Router<AppState> {
 
         if let Some(target) = target {
             changes.push(objective::target::set(target))
+        }
+
+        if let Some(period_id) = period_id {
+            changes.push(objective::period_id::set(period_id))
         }
 
         if let Some(deadline) = deadline {

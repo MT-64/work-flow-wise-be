@@ -70,12 +70,14 @@ model Organize {
 
 model Objective {
   pk_objective_id String         @id @unique
+  period_id       String
+  period          Period         @relation(fields: [period_id], references: [pk_period_id])
   obj_type        objective_type @default(Other)
   name            String
   description     String?
   target          String
   progress        Float?         @default(0)
-  status          Boolean	     @default(true)
+  status          Boolean        @default(true)
   created_at      DateTime       @default(now())
   updated_at      DateTime       @updatedAt
   deadline        DateTime
@@ -144,4 +146,12 @@ model KeyResult {
   createdAt DateTime @default(now())
 
   updatedAt DateTime @updatedAt
+}
+
+model Period {
+  pk_period_id String      @id @map("pk_period_id")
+  name         String
+  start_date   DateTime 
+  end_date     DateTime
+  Objective    Objective[]
 }

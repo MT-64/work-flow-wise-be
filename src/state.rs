@@ -2,7 +2,8 @@ use std::sync::Arc;
 
 use crate::{
     department::service::DepartmentService, key_result::service::KeyResultService,
-    objectives::service::ObjectiveService, prisma::PrismaClient, users::service::UserService,
+    objectives::service::ObjectiveService, periods::service::PeriodService, prisma::PrismaClient,
+    users::service::UserService,
 };
 
 #[derive(Clone)]
@@ -11,6 +12,7 @@ pub struct AppState {
     pub obj_service: ObjectiveService,
     pub department_service: DepartmentService,
     pub keyresult_service: KeyResultService,
+    pub period_service: PeriodService,
 }
 
 impl AppState {
@@ -20,6 +22,7 @@ impl AppState {
             obj_service: ObjectiveService::init(&client),
             department_service: DepartmentService::init(&client),
             keyresult_service: KeyResultService::init(&client),
+            period_service: PeriodService::init(&client),
         }
     }
 }

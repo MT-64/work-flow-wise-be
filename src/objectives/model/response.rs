@@ -7,6 +7,7 @@ use validator::Validate;
 
 objective::select!(objective_select {
     pk_objective_id
+    period_id
     obj_type
     name
     description
@@ -25,6 +26,7 @@ pub type ObjSelect = objective_select::Data;
 #[serde(rename_all = "camelCase")]
 pub struct ObjectiveResponse {
     pub obj_id: String,
+    pub period_id: String,
     pub obj_type: crate::prisma::ObjectiveType,
     pub name: String,
     pub description: Option<String>,
@@ -40,6 +42,7 @@ impl From<ObjSelect> for ObjectiveResponse {
     fn from(
         ObjSelect {
             pk_objective_id,
+            period_id,
             obj_type,
             name,
             description,
@@ -53,6 +56,7 @@ impl From<ObjSelect> for ObjectiveResponse {
     ) -> Self {
         Self {
             obj_id: pk_objective_id,
+            period_id,
             obj_type,
             name,
             description,
