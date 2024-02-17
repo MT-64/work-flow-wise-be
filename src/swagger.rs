@@ -80,7 +80,8 @@ use crate::users;
     objectives::controller::create::create_obj,
     objectives::controller::delete::delete_obj,
     objectives::controller::update::update_obj,
-
+    objectives::controller::add_to_department::add_to_department,
+    objectives::controller::add_to_user::add_to_user,
     ////////// department
     department::controller::get::get_department,
     department::controller::get::get_departments,
