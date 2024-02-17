@@ -40,6 +40,7 @@ pub fn create_period() -> Router<AppState> {
         State(AppState { period_service, .. }): State<AppState>,
         CreatePeriodRequest {
             name,
+            organize_id,
             start_date,
             end_date,
         }: CreatePeriodRequest,
@@ -47,7 +48,7 @@ pub fn create_period() -> Router<AppState> {
         let mut params = vec![];
 
         let new_period: PeriodResponse = period_service
-            .create_period(name, start_date, end_date, params)
+            .create_period(name, organize_id, start_date, end_date, params)
             .await?
             .into();
 

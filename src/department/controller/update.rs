@@ -21,11 +21,11 @@ use crate::prisma::department;
   tag = "Department",
   path = "/api/v1/department/update/{department_id}",
   params(
-    ("obj_id" = String, Path, description = "Department ID")
+    ("department_id" = String, Path, description = "Department ID")
   ),
 
   request_body(
-    content = UpdateObjRequest,
+    content = UpdateDepartmentRequest,
   content_type = "multipart/form-data",
     description = "Update department request",
   ),
@@ -76,7 +76,7 @@ pub fn update_department() -> Router<AppState> {
             .await?
             .into();
         Ok(WebResponse::ok(
-            "Update user successfully",
+            "Update department successfully",
             updated_department,
         ))
     }

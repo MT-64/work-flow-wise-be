@@ -46,28 +46,31 @@ model User {
   created_at         DateTime @default(now())
   updated_at         DateTime @default(now())
 
-  //  department      Department? @relation(fields: [department_id], references: [pk_department_id])
-  //  organize       Organize?    @relation(fields: [organize_id], references: [pk_organize_id])
-  //  objectives      Objective[]  @relation(fields: [pk_user_id], references: [pk_objective_id])
-  //  user_information UserInformation? @relation(fields: [pk_user_id], references: [pk_user_id])
   KeyResult       KeyResult[]
   ObjectiveOnUser ObjectiveOnUser[]
+  Organize        Organize[]
 }
 
 model Department {
-  pk_department_id      String                  @id @unique
-  organize_id           String
-  manager_id            String?
-  name                  String                  @unique
+  pk_department_id String  @id @unique
+  organize_id      String
+  manager_id       String?
+  name             String  @unique
+
+  organize              Organize                @relation(fields: [organize_id], references: [pk_organize_id])
   ObjectiveOnDepartment ObjectiveOnDepartment[]
 }
 
 model Organize {
-  pk_organize_id String  @id @unique
-  owner_id       String?
-  name           String  @unique
+  pk_organize_id String @id @unique
+  owner_id       String
+  name           String @unique
   address        String
   contact        String
+
+  owner      User         @relation(fields: [owner_id], references: [pk_user_id])
+  Department Department[]
+  Period     Period[]
 }
 
 model Objective {
@@ -153,11 +156,14 @@ model KeyResult {
 }
 
 model Period {
-  pk_period_id String      @id @map("pk_period_id")
+  pk_period_id String   @id @map("pk_period_id")
+  organize_id  String
   name         String
   start_date   DateTime
   end_date     DateTime
-  Objective    Objective[]
+
+  Objective Objective[]
+  Organize  Organize    @relation(fields: [organize_id], references: [pk_organize_id])
 }
 
 model ObjectiveOnDepartment {

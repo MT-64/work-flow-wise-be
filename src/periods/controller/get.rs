@@ -43,7 +43,7 @@ use crate::{
 pub fn get_periods() -> Router<AppState> {
     async fn get_periods_handler(
         State(AppState { period_service, .. }): State<AppState>,
-        PeriodQueryRequest { offset, limit, id, name, start_date, end_date }:PeriodQueryRequest
+        PeriodQueryRequest { offset, limit, id, name, organize_id, start_date, end_date }:PeriodQueryRequest
 
     ) -> WebResult {
         let offset = offset.unwrap_or(0);
@@ -60,6 +60,10 @@ pub fn get_periods() -> Router<AppState> {
 
         if let Some(id) = id {
             filters.push(period::pk_period_id::equals(id));
+        }
+
+        if let Some(organize_id) = organize_id {
+            filters.push(period::organize_id::equals(organize_id));
         }
 
         if let Some(name) = name {
