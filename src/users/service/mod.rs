@@ -1,6 +1,7 @@
 use crate::{
     error::ErrorResponse,
     helpers::id::generate_id,
+    prisma::objective_on_department::department_id,
     users::model::response::{
         user_select, user_select_with_password, UserSelect, UserSelectWithPassword,
     },
@@ -140,5 +141,14 @@ impl UserService {
             .await?;
 
         Ok(deleted_user)
+    }
+    pub async fn add_user_to_department(
+        &self,
+        user_id: String,
+        department_id: String,
+    ) -> Result<UserSelect, ErrorResponse> {
+        let changes: Vec<SetParam> = vec![user::department_id::set(Some(department_id))];
+
+        self.update_user(user_id, changes).await
     }
 }

@@ -81,6 +81,7 @@ use crate::users;
     users::controller::update::update_user,
     users::controller::delete::delete_user,
     users::controller::login::login,
+    users::controller::add_to_department::add_to_department,
 
     /////////// objective
     objectives::controller::get::get_obj,
