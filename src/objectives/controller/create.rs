@@ -40,6 +40,7 @@ pub fn create_obj() -> Router<AppState> {
         State(AppState { obj_service, .. }): State<AppState>,
         CreateObjRequest {
             obj_type,
+            period_id,
             name,
             description,
             target,
@@ -62,7 +63,7 @@ pub fn create_obj() -> Router<AppState> {
         params.push(objective::obj_type::set(new_obj_type));
 
         let new_obj: ObjectiveResponse = obj_service
-            .create_obj(name, target, deadline, params)
+            .create_obj(name, target, deadline, period_id, params)
             .await?
             .into();
 

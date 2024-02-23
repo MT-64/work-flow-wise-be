@@ -163,6 +163,7 @@ pub struct UserQueryRequest {
     pub offset: Option<i64>,
     pub limit: Option<i64>,
     pub id: Option<String>,
+    pub department_id: Option<String>,
     pub first_name: Option<String>,
     pub last_name: Option<String>,
     pub username: Option<String>,

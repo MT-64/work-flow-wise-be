@@ -27,6 +27,8 @@ mod extractors;
 mod helpers;
 mod key_result;
 mod objectives;
+mod organize;
+mod periods;
 mod prisma;
 mod response;
 mod routes;

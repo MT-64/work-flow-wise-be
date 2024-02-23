@@ -19,6 +19,7 @@ use crate::{
     ("offset" = inline(Option<i64>), Query, description = "Starting point"),
     ("limit" = inline(Option<i32>), Query, description = "Limit"),
     ("id" = inline(Option<String>), Query, description = "Obj id"),
+    ("period_id" = inline(Option<String>), Query, description = "Period id"),
     ("name" = inline(Option<String>), Query, description = "Obj name"),
     ("status" = inline(Option<bool>), Query, description = "status"),
     ("progress" = inline(Option<f64>), Query, description = "progress"),
@@ -48,7 +49,7 @@ use crate::{
 pub fn get_objs() -> Router<AppState> {
     async fn get_objs_handler(
         State(AppState { obj_service, .. }): State<AppState>,
-        ObjQueryRequest {deadline,  offset, limit, id, name, status, progress, obj_type, created_at, updated_at }: ObjQueryRequest
+        ObjQueryRequest {deadline,  offset, limit, id, name, status, progress, obj_type, created_at, updated_at, period_id }: ObjQueryRequest
     ) -> WebResult {
         let offset = offset.unwrap_or(0);
 
@@ -76,6 +77,10 @@ pub fn get_objs() -> Router<AppState> {
 
         if let Some(status) = status {
             filters.push(objective::status::equals(status));
+        }
+
+        if let Some(period_id) = period_id {
+            filters.push(objective::period_id::equals(period_id));
         }
 
 

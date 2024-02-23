@@ -46,11 +46,9 @@ model User {
   created_at         DateTime @default(now())
   updated_at         DateTime @default(now())
 
-  //  department      Department? @relation(fields: [department_id], references: [pk_department_id])
-  //  organize       Organize?    @relation(fields: [organize_id], references: [pk_organize_id])
-  //  objectives      Objective[]  @relation(fields: [pk_user_id], references: [pk_objective_id])
-  //  user_information UserInformation? @relation(fields: [pk_user_id], references: [pk_user_id])
-  KeyResult KeyResult[]
+  KeyResult       KeyResult[]
+  ObjectiveOnUser ObjectiveOnUser[]
+  Organize        Organize[]
 }
 
 model Department {
@@ -58,28 +56,39 @@ model Department {
   organize_id      String
   manager_id       String?
   name             String  @unique
+
+  organize              Organize                @relation(fields: [organize_id], references: [pk_organize_id])
+  ObjectiveOnDepartment ObjectiveOnDepartment[]
 }
 
 model Organize {
-  pk_organize_id String  @id @unique
-  owner_id       String?
-  name           String  @unique
+  pk_organize_id String @id @unique
+  owner_id       String
+  name           String @unique
   address        String
   contact        String
+
+  owner      User         @relation(fields: [owner_id], references: [pk_user_id])
+  Department Department[]
+  Period     Period[]
 }
 
 model Objective {
-  pk_objective_id String         @id @unique
-  obj_type        objective_type @default(Other)
-  name            String
-  description     String?
-  target          String
-  progress        Float?         @default(0)
-  status          Boolean	     @default(true)
-  created_at      DateTime       @default(now())
-  updated_at      DateTime       @updatedAt
-  deadline        DateTime
-  KeyResult       KeyResult[]
+  pk_objective_id       String                  @id @unique
+  period_id             String
+  period                Period                  @relation(fields: [period_id], references: [pk_period_id])
+  obj_type              objective_type          @default(Other)
+  name                  String
+  description           String?
+  target                String
+  progress              Float?                  @default(0)
+  status                Boolean                 @default(true)
+  created_at            DateTime                @default(now())
+  updated_at            DateTime                @updatedAt
+  deadline              DateTime
+  KeyResult             KeyResult[]
+  ObjectiveOnDepartment ObjectiveOnDepartment[]
+  ObjectiveOnUser       ObjectiveOnUser[]
 }
 
 enum objective_type {
@@ -144,4 +153,39 @@ model KeyResult {
   createdAt DateTime @default(now())
 
   updatedAt DateTime @updatedAt
+}
+
+model Period {
+  pk_period_id String   @id @map("pk_period_id")
+  organize_id  String
+  name         String
+  start_date   DateTime
+  end_date     DateTime
+
+  Objective Objective[]
+  Organize  Organize    @relation(fields: [organize_id], references: [pk_organize_id])
+}
+
+model ObjectiveOnDepartment {
+  id            String     @id @default(uuid())
+  obj_id        String
+  department_id String
+  objective     Objective  @relation(fields: [obj_id], references: [pk_objective_id])
+  department    Department @relation(fields: [department_id], references: [pk_department_id])
+
+  @@unique([obj_id, department_id], map: "uc_obj_department")
+  @@index([obj_id], map: "obj_departments_obj")
+  @@index([department_id], map: "obj_departments_department")
+}
+
+model ObjectiveOnUser {
+  id        String    @id @default(uuid())
+  obj_id    String
+  user_id   String
+  objective Objective @relation(fields: [obj_id], references: [pk_objective_id])
+  user      User      @relation(fields: [user_id], references: [pk_user_id])
+
+  @@unique([obj_id, user_id], map: "uc_obj_user")
+  @@index([obj_id], map: "obj_users_obj")
+  @@index([user_id], map: "obj_users_department")
 }

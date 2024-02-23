@@ -92,7 +92,6 @@ pub fn get_departments() -> Router<AppState> {
             .into_iter()
             .map(|u| u.into())
             .collect();
-        tracing::info!("department: {:?}", departments);
         Ok(WebResponse::ok("Get departments successfully", departments))
     }
     Router::new().route("/", get(get_department_handler))

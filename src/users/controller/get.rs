@@ -19,6 +19,7 @@ use crate::{
     ("offset" = inline(Option<i64>), Query, description = "Starting point"),
     ("limit" = inline(Option<i32>), Query, description = "Limit"),
     ("id" = inline(Option<String>), Query, description = "User id"),
+    ("department_id" = inline(Option<String>), Query, description = "department_id"),
     ("firstName" = inline(Option<String>), Query, description = "User first name"),
     ("lastName" = inline(Option<String>), Query, description = "User last name"),
     ("nickname" = inline(Option<String>), Query, description = "User nickname"),
@@ -79,6 +80,7 @@ pub fn get_users() -> Router<AppState> {
             offset,
             limit,
             id,
+            department_id,
             first_name,
             last_name,
             username,
@@ -88,6 +90,7 @@ pub fn get_users() -> Router<AppState> {
             updated_at,
         }: UserQueryRequest,
     ) -> WebResult {
+        tracing::info!("{:?}", department_id);
         let offset = offset.unwrap_or(0);
 
         let limit = match limit {
@@ -103,6 +106,8 @@ pub fn get_users() -> Router<AppState> {
         if let Some(id) = id {
             filters.push(user::pk_user_id::equals(id));
         }
+
+        filters.push(user::department_id::equals(department_id));
 
         if let Some(first_name) = first_name {
             filters.push(user::first_name::equals(Some(first_name)));

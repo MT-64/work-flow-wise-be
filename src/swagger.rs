@@ -10,15 +10,21 @@ use crate::users::model::request::{
 use crate::department::model::request::{CreateDepartmentRequest, UpdateDepartmentRequest};
 use crate::key_result::model::request::{CreateKrRequest, UpdateKrRequest};
 use crate::objectives::model::request::{CreateObjRequest, UpdateObjRequest};
+use crate::organize::model::request::{CreateOrganizeRequest, UpdateOrganizeRequest};
+use crate::periods::model::request::{CreatePeriodRequest, UpdatePeriodRequest};
 
 use crate::department::model::response::DepartmentResponse;
 use crate::key_result::model::response::KeyResultResponse;
 use crate::objectives::model::response::ObjectiveResponse;
+use crate::organize::model::response::OrganizeResponse;
+use crate::periods::model::response::PeriodResponse;
 use crate::users::model::response::UserResponse;
 
 use crate::department;
 use crate::key_result;
 use crate::objectives;
+use crate::organize;
+use crate::periods;
 use crate::users;
 
 #[derive(OpenApi)]
@@ -47,12 +53,21 @@ use crate::users;
       //Keyresult
       CreateKrRequest,
       UpdateKrRequest,
+      // Period
+      CreatePeriodRequest,
+      UpdatePeriodRequest,
+      // Organize
+      CreateOrganizeRequest,
+      UpdateOrganizeRequest,
+
 
       // Responses
       UserResponse,
       ObjectiveResponse,
       DepartmentResponse,
-      KeyResultResponse
+      KeyResultResponse,
+      PeriodResponse,
+      OrganizeResponse
 
     )
   ),
@@ -66,6 +81,7 @@ use crate::users;
     users::controller::update::update_user,
     users::controller::delete::delete_user,
     users::controller::login::login,
+    users::controller::add_to_department::add_to_department,
 
     /////////// objective
     objectives::controller::get::get_obj,
@@ -73,7 +89,8 @@ use crate::users;
     objectives::controller::create::create_obj,
     objectives::controller::delete::delete_obj,
     objectives::controller::update::update_obj,
-
+    objectives::controller::add_to_department::add_to_department,
+    objectives::controller::add_to_user::add_to_user,
     ////////// department
     department::controller::get::get_department,
     department::controller::get::get_departments,
@@ -87,6 +104,21 @@ use crate::users;
     key_result::controller::create::create_kr,
     key_result::controller::delete::delete_kr,
     key_result::controller::update::update_kr,
+
+    ////////// period
+    periods::controller::get::get_periods,
+    periods::controller::get::get_period,
+    periods::controller::create::create_period,
+    periods::controller::delete::delete_period,
+    periods::controller::update::update_period,
+    
+    ////////// organize
+    // organize::controller::get::get_periods,
+    // organize::controller::get::get_period,
+    organize::controller::create::create_organize,
+    organize::controller::delete::delete_organize,
+    organize::controller::update::update_organize,
+
 
 
   ),

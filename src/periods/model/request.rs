@@ -16,31 +16,25 @@ use crate::{error::ErrorResponse, helpers::validation::validation_message, state
 #[derive(Debug, Deserialize, Validate, ToSchema)]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "camelCase")]
-pub struct CreateObjRequest {
-    pub obj_type: String,
-    pub period_id: String,
+pub struct CreatePeriodRequest {
     pub name: String,
-    pub description: Option<String>,
-    pub target: String,
-    pub progress: Option<f64>,
-    pub deadline: i64,
+    pub organize_id: String,
+    pub start_date: i64,
+    pub end_date: i64,
 }
 
 #[async_trait]
-impl FromRequest<AppState, Body> for CreateObjRequest {
+impl FromRequest<AppState, Body> for CreatePeriodRequest {
     type Rejection = ErrorResponse;
 
     async fn from_request(req: Request<Body>, state: &AppState) -> Result<Self, Self::Rejection> {
-        let Json(body) = Json::<CreateObjRequest>::from_request(req, state).await?;
+        let Json(body) = Json::<CreatePeriodRequest>::from_request(req, state).await?;
 
-        let CreateObjRequest {
-            obj_type,
-            period_id,
+        let CreatePeriodRequest {
             name,
-            description,
-            target,
-            progress,
-            deadline,
+            organize_id,
+            start_date,
+            end_date,
         } = &body;
 
         Ok(body)
@@ -49,63 +43,54 @@ impl FromRequest<AppState, Body> for CreateObjRequest {
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct ObjQueryRequest {
+pub struct PeriodQueryRequest {
     pub offset: Option<i64>,
     pub limit: Option<i64>,
     pub id: Option<String>,
-    pub period_id: Option<String>,
+    pub organize_id: Option<String>,
     pub name: Option<String>,
-    pub status: Option<bool>,
-    pub progress: Option<f64>,
-    pub obj_type: Option<String>,
-    pub deadline: Option<i64>,
-    pub created_at: Option<i64>,
-    pub updated_at: Option<i64>,
+    pub start_date: Option<i64>,
+    pub end_date: Option<i64>,
 }
 
 #[async_trait]
-impl FromRequestParts<AppState> for ObjQueryRequest {
+impl FromRequestParts<AppState> for PeriodQueryRequest {
     type Rejection = ErrorResponse;
 
     async fn from_request_parts(
         parts: &mut Parts,
         state: &AppState,
     ) -> Result<Self, Self::Rejection> {
-        let Query(obj_query) = Query::<ObjQueryRequest>::from_request_parts(parts, state).await?;
+        let Query(period_query) =
+            Query::<PeriodQueryRequest>::from_request_parts(parts, state).await?;
 
-        Ok(obj_query)
+        Ok(period_query)
     }
 }
 
 #[derive(Deserialize, Validate, IsEmpty, ToSchema)]
 #[serde(rename_all = "camelCase")]
-pub struct UpdateObjRequest {
+pub struct UpdatePeriodRequest {
     pub name: Option<String>,
-    pub description: Option<String>,
-    pub period_id: Option<String>,
-    pub target: Option<String>,
-    pub progress: Option<f64>,
-    pub deadline: Option<i64>,
+    pub start_date: Option<i64>,
+    pub end_date: Option<i64>,
 }
 
 #[async_trait]
-impl FromRequest<AppState, Body> for UpdateObjRequest {
+impl FromRequest<AppState, Body> for UpdatePeriodRequest {
     type Rejection = ErrorResponse;
-    async fn from_request(req: Request<Body>, state: &AppState) -> Result<Self, Self::Rejection> {
-        let Json(body) = Json::<UpdateObjRequest>::from_request(req, state).await?;
 
-        // Just return no content if the body is empty
+    async fn from_request(req: Request<Body>, state: &AppState) -> Result<Self, Self::Rejection> {
+        let Json(body) = Json::<UpdatePeriodRequest>::from_request(req, state).await?;
+
         if body.is_empty() {
             return Err(ErrorResponse::NoContent);
         }
 
-        let UpdateObjRequest {
+        let UpdatePeriodRequest {
             name,
-            period_id,
-            description,
-            target,
-            progress,
-            deadline,
+            start_date,
+            end_date,
         } = &body;
 
         Ok(body)

@@ -1,3 +1,4 @@
+use crate::prisma::{department, period, user};
 use crate::{error::ErrorResponse, helpers::id::generate_id, prisma::objective::deadline};
 use std::sync::Arc;
 
@@ -66,6 +67,7 @@ impl ObjectiveService {
         name: String,
         target: String,
         deadline: i64,
+        period_id: String,
         params: Vec<SetParam>,
     ) -> Result<ObjSelect, ErrorResponse> {
         let deadline_tz = DateTime::from_timestamp(deadline, 0)
@@ -74,7 +76,14 @@ impl ObjectiveService {
 
         self.db
             .objective()
-            .create(generate_id(), name, target, deadline_tz, params)
+            .create(
+                generate_id(),
+                period::pk_period_id::equals(period_id),
+                name,
+                target,
+                deadline_tz,
+                params,
+            )
             .select(objective_select::select())
             .exec()
             .await
@@ -105,5 +114,37 @@ impl ObjectiveService {
             .await?;
 
         Ok(deleted_obj)
+    }
+
+    pub async fn add_to_department(
+        &self,
+        obj_id: String,
+        department_id: String,
+    ) -> Result<(), ErrorResponse> {
+        self.db
+            .objective_on_department()
+            .create(
+                objective::pk_objective_id::equals(obj_id),
+                department::pk_department_id::equals(department_id),
+                vec![],
+            )
+            .exec()
+            .await?;
+
+        Ok(())
+    }
+
+    pub async fn add_to_user(&self, obj_id: String, user_id: String) -> Result<(), ErrorResponse> {
+        self.db
+            .objective_on_user()
+            .create(
+                objective::pk_objective_id::equals(obj_id),
+                user::pk_user_id::equals(user_id),
+                vec![],
+            )
+            .exec()
+            .await?;
+
+        Ok(())
     }
 }
