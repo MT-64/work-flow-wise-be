@@ -1,4 +1,4 @@
-use crate::prisma::{department, period, user};
+use crate::prisma::{department, organize, period, user};
 use crate::{error::ErrorResponse, helpers::id::generate_id, prisma::objective::deadline};
 use std::sync::Arc;
 
@@ -145,6 +145,19 @@ impl ObjectiveService {
             .exec()
             .await?;
 
+        Ok(())
+    }
+
+    pub async fn add_to_org(&self, obj_id: String, org_id: String) -> Result<(), ErrorResponse> {
+        self.db
+            .objective_on_org()
+            .create(
+                objective::pk_objective_id::equals(obj_id),
+                organize::pk_organize_id::equals(org_id),
+                vec![],
+            )
+            .exec()
+            .await?;
         Ok(())
     }
 }

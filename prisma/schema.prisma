@@ -68,9 +68,10 @@ model Organize {
   address        String
   contact        String
 
-  owner      User         @relation(fields: [owner_id], references: [pk_user_id])
-  Department Department[]
-  Period     Period[]
+  owner          User             @relation(fields: [owner_id], references: [pk_user_id])
+  Department     Department[]
+  Period         Period[]
+  ObjectiveOnOrg ObjectiveOnOrg[]
 }
 
 model Objective {
@@ -89,6 +90,7 @@ model Objective {
   KeyResult             KeyResult[]
   ObjectiveOnDepartment ObjectiveOnDepartment[]
   ObjectiveOnUser       ObjectiveOnUser[]
+  ObjectiveOnOrg        ObjectiveOnOrg[]
 }
 
 enum objective_type {
@@ -187,5 +189,17 @@ model ObjectiveOnUser {
 
   @@unique([obj_id, user_id], map: "uc_obj_user")
   @@index([obj_id], map: "obj_users_obj")
-  @@index([user_id], map: "obj_users_department")
+  @@index([user_id], map: "obj_users_user")
+}
+
+model ObjectiveOnOrg {
+  id        String    @id @default(uuid())
+  obj_id    String
+  org_id    String
+  objective Objective @relation(fields: [obj_id], references: [pk_objective_id])
+  org       Organize  @relation(fields: [org_id], references: [pk_organize_id])
+
+  @@unique([obj_id, org_id], map: "uc_obj_org")
+  @@index([obj_id], map: "obj_orgs_obj")
+  @@index([org_id], map: "obj_orgs_organize")
 }
