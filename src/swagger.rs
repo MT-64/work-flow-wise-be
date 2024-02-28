@@ -91,6 +91,7 @@ use crate::users;
     objectives::controller::update::update_obj,
     objectives::controller::add_to_department::add_to_department,
     objectives::controller::add_to_user::add_to_user,
+    objectives::controller::add_to_org::add_to_organize,
     ////////// department
     department::controller::get::get_department,
     department::controller::get::get_departments,
