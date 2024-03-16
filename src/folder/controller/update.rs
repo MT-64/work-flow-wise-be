@@ -1,7 +1,7 @@
 use axum::{extract::State, routing::put, Router};
 
 use crate::{
-    error::Error,
+    error::ErrorResponse,
     extractors::param::ParamId,
     folder::model::update::UpdateFolderRequest,
     prisma::folder,
@@ -45,7 +45,7 @@ pub fn update_folder() -> Router<AppState> {
                     .await?;
 
                 if parent_folder.id == target_folder.id {
-                    return Err(Error::Forbidden);
+                    return Err(ErrorResponse::Forbidden);
                 }
 
                 Some(parent_folder.id)

@@ -31,7 +31,10 @@ pub fn get_folder_content() -> Router<AppState> {
     ) -> WebResult {
         // Find the folder from param id
         let found_folder = match user_or_guest {
-            Some(LoggedInUser(UserSelect { id: user_id, .. })) => {
+            Some(LoggedInUser(UserSelect {
+                pk_user_id: user_id,
+                ..
+            })) => {
                 folder_service
                     .get_folder_by_user_id(vec![folder::id::equals(folder_id)], user_id)
                     .await?

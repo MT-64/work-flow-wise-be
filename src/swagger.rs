@@ -19,6 +19,7 @@ use crate::objectives::model::response::ObjectiveResponse;
 use crate::organize::model::response::OrganizeResponse;
 use crate::periods::model::response::PeriodResponse;
 use crate::users::model::response::UserResponse;
+use crate::file::model::{select::File, query::FileQuery};
 
 use crate::department;
 use crate::key_result;
@@ -26,6 +27,8 @@ use crate::objectives;
 use crate::organize;
 use crate::periods;
 use crate::users;
+use crate::file;
+use crate::folder;
 
 #[derive(OpenApi)]
 #[openapi(
@@ -59,7 +62,7 @@ use crate::users;
       // Organize
       CreateOrganizeRequest,
       UpdateOrganizeRequest,
-
+      //File 
 
       // Responses
       UserResponse,
@@ -114,11 +117,14 @@ use crate::users;
     periods::controller::update::update_period,
     
     ////////// organize
-    // organize::controller::get::get_periods,
-    // organize::controller::get::get_period,
+    organize::controller::get::get_organize,
+    organize::controller::get::get_organizes,
     organize::controller::create::create_organize,
     organize::controller::delete::delete_organize,
     organize::controller::update::update_organize,
+
+    //////// file 
+    file::controller::get::my::get_my_files,
 
 
 

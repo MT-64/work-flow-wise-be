@@ -2,10 +2,10 @@ use std::sync::Arc;
 
 use crate::{
     aws::S3, department::service::DepartmentService, file::service::FileService,
-    file_version::service::FileVersionService, key_result::service::KeyResultService,
-    objectives::service::ObjectiveService, organize::service::OrganizeService,
-    periods::service::PeriodService, prisma::PrismaClient, tag::service::TagService,
-    users::service::UserService,
+    file_version::service::FileVersionService, folder::service::FolderService,
+    key_result::service::KeyResultService, objectives::service::ObjectiveService,
+    organize::service::OrganizeService, periods::service::PeriodService, prisma::PrismaClient,
+    tag::service::TagService, users::service::UserService,
 };
 
 #[derive(Clone)]

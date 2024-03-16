@@ -90,7 +90,6 @@ pub fn get_users() -> Router<AppState> {
             updated_at,
         }: UserQueryRequest,
     ) -> WebResult {
-        tracing::info!("{:?}", department_id);
         let offset = offset.unwrap_or(0);
 
         let limit = match limit {

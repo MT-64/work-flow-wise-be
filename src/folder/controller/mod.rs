@@ -19,7 +19,7 @@ use {create::create_folder, delete::delete_folder, update::update_folder};
 
 pub fn folder_routes() -> Router<AppState> {
     Router::new().nest(
-        "/folder",
+        "/api/v1/folder",
         Router::new()
             // GET /folder/public?query
             .merge(get_public_folders())

@@ -56,7 +56,7 @@ pub fn create_file() -> Router<AppState> {
                 parent_folder.id,
                 file_name,
                 visibility.unwrap_or(Visibility::Public),
-                parent_folder.owner.id,
+                parent_folder.owner.pk_user_id,
             )
             .await?;
 

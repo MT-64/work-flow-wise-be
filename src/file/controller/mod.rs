@@ -22,7 +22,7 @@ use self::{
 
 pub fn file_routes() -> Router<AppState> {
     Router::new().nest(
-        "/file",
+        "/api/v1/file",
         Router::new()
             // GET /file/public?query
             .merge(get_public_files())

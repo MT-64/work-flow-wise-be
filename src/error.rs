@@ -94,6 +94,12 @@ pub enum ErrorResponse {
     #[error("Forbidden")]
     Forbidden,
 
+    #[error("Download error")]
+    Download(#[from] std::io::Error),
+
+    #[error("Zip error")]
+    Zip(#[from] zip::result::ZipError),
+
     /*
         AWS errors
     */
@@ -208,6 +214,9 @@ impl IntoResponse for ErrorResponse {
                 "Forbidden",
                 "You do not have permissions to perform this action",
             ),
+            ErrorResponse::Download(e) => WebResponse::internal_error("The download process failed", e),
+            ErrorResponse::Zip(e) => WebResponse::internal_error("The zip process failed", e)
+
         }
     }
 }

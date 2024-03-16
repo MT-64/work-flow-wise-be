@@ -26,6 +26,7 @@ pub fn create_folder() -> Router<AppState> {
 
             First, set the query for starting folder
         */
+        tracing::info!("Into create folder");
 
         let starting_point = match &parent {
             Some(parent) => vec![folder::id::equals(parent.clone())],
