@@ -1,0 +1,63 @@
+use axum::{extract::State, routing::put, Router};
+
+use crate::{
+    error::ErrorResponse,
+    extractors::param::ParamId,
+    folder::model::update::UpdateFolderRequest,
+    prisma::folder,
+    response::WebResponse,
+    users::model::{loggedin::LoggedInUser, response::UserSelect},
+    AppState, WebResult,
+};
+
+pub fn update_folder() -> Router<AppState> {
+    async fn update_folder_handler(
+        State(AppState { folder_service, .. }): State<AppState>,
+        LoggedInUser(UserSelect {
+            pk_user_id: user_id,
+            ..
+        }): LoggedInUser,
+        ParamId(param_folder_id): ParamId,
+        UpdateFolderRequest {
+            parent,
+            folder_name,
+            visibility,
+        }: UpdateFolderRequest,
+    ) -> WebResult {
+        /*
+            Remember to use update_unchecked
+
+            There are two important tasks when it comes to updating a folder
+            If the parent field is provided,
+            we have to make sure that the parent id
+            points to a folder that is ours, OR shared to us
+        */
+
+        // Find the folder
+        let target_folder = folder_service
+            .get_folder_by_user_id(vec![folder::id::equals(param_folder_id)], user_id.clone())
+            .await?;
+
+        let parent_folder_id = match parent {
+            Some(parent) => {
+                let parent_folder = folder_service
+                    .get_folder_by_user_id(vec![folder::id::equals(parent)], user_id)
+                    .await?;
+
+                if parent_folder.id == target_folder.id {
+                    return Err(ErrorResponse::Forbidden);
+                }
+
+                Some(parent_folder.id)
+            }
+            None => None,
+        };
+
+        let updated_folder = folder_service
+            .update_folder(target_folder.id, parent_folder_id, folder_name, visibility)
+            .await?;
+
+        Ok(WebResponse::ok("Update folder success", updated_folder))
+    }
+    Router::new().route("/update/:folder_id", put(update_folder_handler))
+}

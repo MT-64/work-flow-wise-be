@@ -2,6 +2,15 @@ use crate::{
     helpers::validation::{extract_validation_error, validation_message},
     response::WebResponse,
 };
+
+use aws_sdk_s3::{
+    error::{BuildError, SdkError},
+    operation::{
+        copy_object::CopyObjectError, delete_object::DeleteObjectError,
+        delete_objects::DeleteObjectsError, get_object::GetObjectError,
+        list_objects_v2::ListObjectsV2Error, put_object::PutObjectError,
+    },
+};
 use axum::{
     extract::rejection::{JsonRejection, PathRejection, QueryRejection},
     response::{IntoResponse, Response},
@@ -81,6 +90,39 @@ pub enum ErrorResponse {
 
     #[error("Body no content")]
     NoContent,
+
+    #[error("Forbidden")]
+    Forbidden,
+
+    #[error("Download error")]
+    Download(#[from] std::io::Error),
+
+    #[error("Zip error")]
+    Zip(#[from] zip::result::ZipError),
+
+    /*
+        AWS errors
+    */
+    #[error("Upload file error")]
+    PutObject(#[from] SdkError<PutObjectError>),
+
+    #[error("Get single file error")]
+    GetObject(#[from] SdkError<GetObjectError>),
+
+    #[error("List all files error")]
+    ListObject(#[from] SdkError<ListObjectsV2Error>),
+
+    #[error("Copy file error")]
+    CopyObject(#[from] SdkError<CopyObjectError>),
+
+    #[error("Delete file error")]
+    DeleteObject(#[from] SdkError<DeleteObjectError>),
+
+    #[error("Delete files error")]
+    DeleteObjects(#[from] SdkError<DeleteObjectsError>),
+
+    #[error("Build ObjectIdentifier error")]
+    BuildObjectIdentifier(#[from] BuildError),
 }
 
 impl IntoResponse for ErrorResponse {
@@ -132,6 +174,49 @@ impl IntoResponse for ErrorResponse {
                     e
                 ),
             ),
+
+   /*
+                AWS S3 errors
+            */
+            ErrorResponse::GetObject(_) => WebResponse::bad_request(
+                "Get file error",
+                "This maybe due to the information provided was incorrect",
+            ),
+
+            ErrorResponse::PutObject(_) => WebResponse::bad_request(
+                "Cannot upload file",
+                "This is maybe due to the file is in wrong format or too large for upload",
+            ),
+
+            ErrorResponse::CopyObject(_) => WebResponse::internal_error(
+                "Cannot copy file",
+                "This is maybe due to the storage server unable to copy, please try again later",
+            ),
+
+            ErrorResponse::ListObject(_) => WebResponse::internal_error(
+                "Cannot get all files",
+                "Probably database error, please try again later",
+            ),
+
+            ErrorResponse::DeleteObject(_) => WebResponse::internal_error(
+                "Cannot delete file", 
+                "This is due to the database have problems that prevent the file from being deleted"
+            ),
+            ErrorResponse::DeleteObjects(_) => WebResponse::internal_error(
+                "Cannot delete multiple files",
+                "This is due to database error, which make some files couldn't be deleted"
+            ),
+            ErrorResponse::BuildObjectIdentifier(_) => WebResponse::internal_error(
+                "Object ID error", 
+                "This is due to database error, which causes id of some file are invalid"
+            ),
+            ErrorResponse::Forbidden => WebResponse::forbidden(
+                "Forbidden",
+                "You do not have permissions to perform this action",
+            ),
+            ErrorResponse::Download(e) => WebResponse::internal_error("The download process failed", e),
+            ErrorResponse::Zip(e) => WebResponse::internal_error("The zip process failed", e)
+
         }
     }
 }

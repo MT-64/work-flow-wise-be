@@ -41,4 +41,3 @@ impl From<OrganizeSelect> for OrganizeResponse {
         }
     }
 }
-
