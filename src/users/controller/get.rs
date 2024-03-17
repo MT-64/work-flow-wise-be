@@ -1,10 +1,9 @@
-use crate::prisma::{self, user};
-use axum::{extract::State, routing::get, Router};
+use crate::prisma::{self, objective_on_department::department_id, user};
+use axum::{extract::Path, extract::State, routing::get, Router};
 use chrono::DateTime;
 use prisma_client_rust::query_core::schema_builder::constants::filters;
 
 use crate::{
-    extractors::param::ParamId,
     response::WebResponse,
     state::AppState,
     users::model::{loggedin::LoggedInUser, request::UserQueryRequest, response::UserResponse},
@@ -19,7 +18,8 @@ use crate::{
     ("offset" = inline(Option<i64>), Query, description = "Starting point"),
     ("limit" = inline(Option<i32>), Query, description = "Limit"),
     ("id" = inline(Option<String>), Query, description = "User id"),
-    ("department_id" = inline(Option<String>), Query, description = "department_id"),
+    ("departmentId" = inline(Option<String>), Query, description = "department_id"),
+    ("organizeId" = inline(Option<String>), Query, description = "organize_id"),
     ("firstName" = inline(Option<String>), Query, description = "User first name"),
     ("lastName" = inline(Option<String>), Query, description = "User last name"),
     ("nickname" = inline(Option<String>), Query, description = "User nickname"),
@@ -81,6 +81,7 @@ pub fn get_users() -> Router<AppState> {
             limit,
             id,
             department_id,
+            organize_id,
             first_name,
             last_name,
             username,
@@ -106,7 +107,12 @@ pub fn get_users() -> Router<AppState> {
             filters.push(user::pk_user_id::equals(id));
         }
 
-        filters.push(user::department_id::equals(department_id));
+        if let Some(department_id) = department_id {
+            filters.push(user::department_id::equals(Some(department_id)));
+        }
+        if let Some(organize_id) = organize_id {
+            filters.push(user::organize_id::equals(Some(organize_id)));
+        }
 
         if let Some(first_name) = first_name {
             filters.push(user::first_name::equals(Some(first_name)));
@@ -198,7 +204,7 @@ pub fn get_users() -> Router<AppState> {
 pub fn get_user() -> Router<AppState> {
     async fn get_user_handler(
         State(AppState { user_service, .. }): State<AppState>,
-        ParamId(user_id): ParamId,
+        Path(user_id): Path<String>,
     ) -> WebResult {
         let user: UserResponse = user_service.get_user_by_id(user_id).await?.into();
         Ok(WebResponse::ok("Get user by id successfully", user))

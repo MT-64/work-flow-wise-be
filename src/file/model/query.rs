@@ -11,7 +11,6 @@ use validator::Validate;
 use crate::{
     error::ErrorResponse,
     prisma::{Extension, Visibility},
-    validation::uuid::check_uuid_option,
     AppState,
 };
 
