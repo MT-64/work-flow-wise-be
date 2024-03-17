@@ -3,9 +3,7 @@ use axum_typed_multipart::{FieldData, TryFromMultipart, TypedMultipart};
 use bytes::Bytes;
 use validator::Validate;
 
-use crate::{
-    error::ErrorResponse, prisma::Visibility, validation::uuid::check_uuid_option, AppState,
-};
+use crate::{error::ErrorResponse, prisma::Visibility, AppState};
 
 #[derive(TryFromMultipart, Validate)]
 pub struct CreateFileRequest {

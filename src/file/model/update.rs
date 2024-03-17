@@ -4,9 +4,7 @@ use bytes::Bytes;
 use is_empty::IsEmpty;
 use validator::Validate;
 
-use crate::{
-    error::ErrorResponse, prisma::Visibility, validation::uuid::check_uuid_option, AppState,
-};
+use crate::{error::ErrorResponse, prisma::Visibility, AppState};
 
 #[derive(TryFromMultipart, Validate, IsEmpty)]
 pub struct UpdateFileRequest {

@@ -4,17 +4,14 @@ use axum::{async_trait, body::Body, extract::FromRequest, http::Request, Json};
 use serde::Deserialize;
 use validator::Validate;
 
-use crate::{error::ErrorResponse, validation::uuid::check_uuid_set, AppState};
+use crate::{error::ErrorResponse, AppState};
 
 #[derive(Deserialize, Validate)]
 pub struct SetTagRequest {
-    #[validate(custom(function = "check_uuid_set"))]
     pub tag_names: HashSet<String>,
 
-    #[validate(custom(function = "check_uuid_set"))]
     pub file_ids: HashSet<String>,
 
-    #[validate(custom(function = "check_uuid_set"))]
     pub folder_ids: HashSet<String>,
 }
 

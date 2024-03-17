@@ -151,4 +151,14 @@ impl UserService {
 
         self.update_user(user_id, changes).await
     }
+
+    pub async fn add_user_to_organize(
+        &self,
+        user_id: String,
+        org_id: String,
+    ) -> Result<UserSelect, ErrorResponse> {
+        let changes: Vec<SetParam> = vec![user::organize_id::set(Some(org_id))];
+
+        self.update_user(user_id, changes).await
+    }
 }

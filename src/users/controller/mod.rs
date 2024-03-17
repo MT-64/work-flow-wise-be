@@ -4,6 +4,7 @@ use crate::state::AppState;
 
 use self::{
     add_to_department::add_to_department,
+    add_to_org::add_to_organize,
     create::create_user,
     delete::delete_user,
     get::{get_user, get_users},
@@ -13,6 +14,7 @@ use self::{
 };
 
 pub mod add_to_department;
+pub mod add_to_org;
 pub mod create;
 pub mod delete;
 pub mod get;
@@ -31,6 +33,7 @@ pub fn user_routes() -> Router<AppState> {
             .merge(update_user())
             .merge(delete_user())
             .merge(login())
-            .merge(add_to_department()),
+            .merge(add_to_department())
+            .merge(add_to_organize()),
     )
 }
