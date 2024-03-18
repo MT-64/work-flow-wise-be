@@ -211,3 +211,46 @@ pub fn get_user() -> Router<AppState> {
     }
     Router::new().route("/:user_id", get(get_user_handler))
 }
+
+#[utoipa::path(
+  get,
+  tag = "User",
+  path = "/api/v1/user/get_by_obj/{obj_id}",
+  params(
+    ("obj_id" = String, Path, description = "objective ID")
+  ),
+  responses(
+    (
+      status = 201,
+      description = "Get user by obj id",
+      body = ObjectiveResponse,
+      example = json! (
+        {
+          "code": 200,
+          "message": "Get user by obj id successfully",
+          "data": {
+          },
+          "error": ""
+        }
+      )
+    ),
+  )
+)]
+pub fn get_users_by_obj() -> Router<AppState> {
+    async fn get_users_by_obj_handler(
+        State(AppState { user_service, .. }): State<AppState>,
+        Path(obj_id): Path<String>,
+    ) -> WebResult {
+        let users: Vec<UserResponse> = user_service
+            .get_users_by_obj(obj_id)
+            .await?
+            .into_iter()
+            .map(|u| u.into())
+            .collect();
+        Ok(WebResponse::ok(
+            "Get users by objective id successfully",
+            users,
+        ))
+    }
+    Router::new().route("/get_by_user/:user_id", get(get_users_by_obj_handler))
+}

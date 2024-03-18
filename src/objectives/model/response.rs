@@ -1,4 +1,4 @@
-use crate::prisma::objective;
+use crate::prisma::{objective, objective_on_department, objective_on_org, objective_on_user};
 use chrono::Utc;
 use is_empty::IsEmpty;
 use serde::{Deserialize, Serialize};
@@ -8,6 +8,7 @@ use validator::Validate;
 objective::select!(objective_select {
     pk_objective_id
     period_id
+    supervisor_id
     obj_type
     name
     description
@@ -19,6 +20,10 @@ objective::select!(objective_select {
     deadline
 });
 
+objective_on_department::select!(obj_id_on_department_select { obj_id });
+objective_on_org::select!(obj_id_on_org { obj_id });
+objective_on_user::select!(obj_id_on_user { obj_id });
+
 pub type ObjSelect = objective_select::Data;
 
 #[derive(Serialize, Deserialize, ToSchema)]
@@ -27,6 +32,7 @@ pub type ObjSelect = objective_select::Data;
 pub struct ObjectiveResponse {
     pub obj_id: String,
     pub period_id: String,
+    pub supervisor_id: String,
     pub obj_type: crate::prisma::ObjectiveType,
     pub name: String,
     pub description: Option<String>,
@@ -45,6 +51,7 @@ impl From<ObjSelect> for ObjectiveResponse {
             period_id,
             obj_type,
             name,
+            supervisor_id,
             description,
             target,
             progress,
@@ -57,6 +64,7 @@ impl From<ObjSelect> for ObjectiveResponse {
         Self {
             obj_id: pk_objective_id,
             period_id,
+            supervisor_id,
             obj_type,
             name,
             description,

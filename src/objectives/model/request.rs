@@ -19,6 +19,7 @@ use crate::{error::ErrorResponse, helpers::validation::validation_message, state
 pub struct CreateObjRequest {
     pub obj_type: String,
     pub period_id: String,
+    pub supervisor_id: String,
     pub name: String,
     pub description: Option<String>,
     pub target: String,
@@ -36,6 +37,7 @@ impl FromRequest<AppState, Body> for CreateObjRequest {
         let CreateObjRequest {
             obj_type,
             period_id,
+            supervisor_id,
             name,
             description,
             target,

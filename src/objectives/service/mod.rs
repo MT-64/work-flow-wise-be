@@ -1,4 +1,6 @@
+use crate::prisma::file::created_at::equals;
 use crate::prisma::{department, organize, period, user};
+use crate::prisma::{objective_on_department, objective_on_org, objective_on_user};
 use crate::{error::ErrorResponse, helpers::id::generate_id, prisma::objective::deadline};
 use std::sync::Arc;
 
@@ -14,7 +16,9 @@ use crate::prisma::{
     PrismaClient,
 };
 
-use super::model::response::{objective_select, ObjSelect};
+use super::model::response::{
+    obj_id_on_department_select, obj_id_on_org, obj_id_on_user, objective_select, ObjSelect,
+};
 
 #[derive(Clone)]
 pub struct ObjectiveService {
@@ -68,6 +72,7 @@ impl ObjectiveService {
         target: String,
         deadline: i64,
         period_id: String,
+        supervisor_id: String,
         params: Vec<SetParam>,
     ) -> Result<ObjSelect, ErrorResponse> {
         let deadline_tz = DateTime::from_timestamp(deadline, 0)
@@ -79,6 +84,7 @@ impl ObjectiveService {
             .create(
                 generate_id(),
                 period::pk_period_id::equals(period_id),
+                user::pk_user_id::equals(supervisor_id),
                 name,
                 target,
                 deadline_tz,
@@ -159,5 +165,71 @@ impl ObjectiveService {
             .exec()
             .await?;
         Ok(())
+    }
+
+    pub async fn get_objs_by_department(
+        &self,
+        department_id: String,
+    ) -> Result<Vec<ObjSelect>, ErrorResponse> {
+        let obj_ids: Vec<String> = self
+            .db
+            .objective_on_department()
+            .find_many(vec![objective_on_department::department_id::equals(
+                department_id,
+            )])
+            .select(obj_id_on_department_select::select())
+            .exec()
+            .await?
+            .into_iter()
+            .map(|i| i.obj_id)
+            .collect();
+        let mut objs = vec![];
+
+        for id in obj_ids {
+            let obj = Self::get_obj_by_id(self, id).await?;
+            objs.push(obj);
+        }
+
+        Ok(objs)
+    }
+    pub async fn get_objs_by_org(&self, org_id: String) -> Result<Vec<ObjSelect>, ErrorResponse> {
+        let obj_ids: Vec<String> = self
+            .db
+            .objective_on_org()
+            .find_many(vec![objective_on_org::org_id::equals(org_id)])
+            .select(obj_id_on_org::select())
+            .exec()
+            .await?
+            .into_iter()
+            .map(|i| i.obj_id)
+            .collect();
+        let mut objs = vec![];
+
+        for id in obj_ids {
+            let obj = Self::get_obj_by_id(self, id).await?;
+            objs.push(obj);
+        }
+
+        Ok(objs)
+    }
+    pub async fn get_objs_by_user(&self, user_id: String) -> Result<Vec<ObjSelect>, ErrorResponse> {
+        let obj_ids: Vec<String> = self
+            .db
+            .objective_on_user()
+            .find_many(vec![objective_on_user::user_id::equals(user_id)])
+            .select(obj_id_on_user::select())
+            .exec()
+            .await?
+            .into_iter()
+            .map(|i| i.obj_id)
+            .collect();
+        let mut objs = vec![];
+
+        for id in obj_ids {
+            let obj = Self::get_obj_by_id(self, id).await?;
+            objs.push(obj);
+        }
+
+        Ok(objs)
     }
 }

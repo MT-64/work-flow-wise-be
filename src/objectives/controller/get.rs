@@ -155,3 +155,114 @@ pub fn get_obj() -> Router<AppState> {
     }
     Router::new().route("/:obj_id", get(get_obj_handler))
 }
+
+#[utoipa::path(
+  get,
+  tag = "Objective",
+  path = "/api/v1/objective/get_by_department/{department_id}",
+  params(
+    ("department_id" = String, Path, description = "departmen ID")
+  ),
+  responses(
+    (
+      status = 201,
+      description = "Get objective by department id",
+      body = ObjectiveResponse,
+      example = json! (
+        {
+          "code": 200,
+          "message": "Get objective by department id successfully",
+          "data": {
+          },
+          "error": ""
+        }
+      )
+    ),
+  )
+)]
+pub fn get_objs_by_department() -> Router<AppState> {
+    async fn get_objs_by_department_handler(
+        State(AppState { obj_service, .. }): State<AppState>,
+        Path(department_id): Path<String>,
+    ) -> WebResult {
+        let objs: Vec<ObjectiveResponse> = obj_service.
+            get_objs_by_department(department_id)
+            .await?.into_iter().map(|o| o.into()).collect();
+        Ok(WebResponse::ok("Get objective by department id successfully", objs))
+    }
+    Router::new().route("/get_by_department/:department_id", get(get_objs_by_department_handler))
+}
+
+#[utoipa::path(
+  get,
+  tag = "Objective",
+  path = "/api/v1/objective/get_by_org/{org_id}",
+  params(
+    ("org_id" = String, Path, description = "organize ID")
+  ),
+  responses(
+    (
+      status = 201,
+      description = "Get objective by org id",
+      body = ObjectiveResponse,
+      example = json! (
+        {
+          "code": 200,
+          "message": "Get objective by org id successfully",
+          "data": {
+          },
+          "error": ""
+        }
+      )
+    ),
+  )
+)]
+pub fn get_objs_by_org() -> Router<AppState> {
+    async fn get_objs_by_org_handler(
+        State(AppState { obj_service, .. }): State<AppState>,
+        Path(org_id): Path<String>,
+    ) -> WebResult {
+        let objs: Vec<ObjectiveResponse> = obj_service.
+            get_objs_by_org(org_id)
+            .await?.into_iter().map(|o| o.into()).collect();
+        Ok(WebResponse::ok("Get objective by organize id successfully", objs))
+    }
+    Router::new().route("/get_by_org/:org_id", get(get_objs_by_org_handler))
+
+}
+#[utoipa::path(
+  get,
+  tag = "Objective",
+  path = "/api/v1/objective/get_by_user/{user_id}",
+  params(
+    ("user_id" = String, Path, description = "user ID")
+  ),
+  responses(
+    (
+      status = 201,
+      description = "Get objective by user id",
+      body = ObjectiveResponse,
+      example = json! (
+        {
+          "code": 200,
+          "message": "Get objective by user id successfully",
+          "data": {
+          },
+          "error": ""
+        }
+      )
+    ),
+  )
+)]
+pub fn get_objs_by_user() -> Router<AppState> {
+    async fn get_objs_by_user_handler(
+        State(AppState { obj_service, .. }): State<AppState>,
+        Path(user_id): Path<String>,
+    ) -> WebResult {
+        let objs: Vec<ObjectiveResponse> = obj_service.
+            get_objs_by_user(user_id)
+            .await?.into_iter().map(|o| o.into()).collect();
+        Ok(WebResponse::ok("Get objective by user id successfully", objs))
+    }
+    Router::new().route("/get_by_user/:user_id", get(get_objs_by_user_handler))
+}

@@ -46,15 +46,16 @@ model User {
   created_at         DateTime @default(now())
   updated_at         DateTime @default(now())
 
-  KeyResult       KeyResult[]
-  ObjectiveOnUser ObjectiveOnUser[]
-  Organize        Organize[]
-  Folder          Folder[]
-  File            File[]
-  sharedToMeFolders Folder[] @relation("FolderCollaborator")
-  sharedToMeFiles   File[]   @relation("FileCollaborator")
-  Tag             Tag[]
-  
+  KeyResult         KeyResult[]
+  ObjectiveOnUser   ObjectiveOnUser[]
+  Organize          Organize[]
+  Folder            Folder[]
+  File              File[]
+  sharedToMeFolders Folder[]          @relation("FolderCollaborator")
+  sharedToMeFiles   File[]            @relation("FileCollaborator")
+  Tag               Tag[]
+
+  Objective Objective[]
 }
 
 model Department {
@@ -85,6 +86,8 @@ model Objective {
   period_id             String
   period                Period                  @relation(fields: [period_id], references: [pk_period_id])
   obj_type              objective_type          @default(Other)
+  supervisor_id         String
+  user                  User                    @relation(fields: [supervisor_id], references: [pk_user_id])
   name                  String
   description           String?
   target                String
@@ -264,14 +267,14 @@ model FileVersion {
   fileId String
 
   versionNumber BigInt
-  
+
   @@unique([fileId, versionNumber])
 }
 
 model Tag {
   id String @id @default(uuid())
 
-  tagName String 
+  tagName String
 
   owner   User   @relation(fields: [ownerId], references: [pk_user_id], onDelete: Cascade)
   ownerId String

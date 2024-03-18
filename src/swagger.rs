@@ -78,6 +78,7 @@ use crate::folder;
     /////// user
     users::controller::get::get_users,
     users::controller::get::get_user,
+    users::controller::get::get_users_by_obj,
  //   users::login::login,
     users::controller::profile::profile,
     users::controller::create::create_user,
@@ -90,12 +91,16 @@ use crate::folder;
     /////////// objective
     objectives::controller::get::get_obj,
     objectives::controller::get::get_objs,
+    objectives::controller::get::get_objs_by_department,
+    objectives::controller::get::get_objs_by_org,
+    objectives::controller::get::get_objs_by_user,
     objectives::controller::create::create_obj,
     objectives::controller::delete::delete_obj,
     objectives::controller::update::update_obj,
     objectives::controller::add_to_department::add_to_department,
     objectives::controller::add_to_user::add_to_user,
     objectives::controller::add_to_org::add_to_organize,
+    
     ////////// department
     department::controller::get::get_department,
     department::controller::get::get_departments,
