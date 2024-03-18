@@ -8,7 +8,7 @@ use self::{
     add_to_user::add_to_user,
     create::create_obj,
     delete::delete_obj,
-    get::{get_obj, get_objs},
+    get::{get_obj, get_objs, get_objs_by_department, get_objs_by_org, get_objs_by_user},
     update::update_obj,
 };
 
@@ -31,6 +31,9 @@ pub fn obj_routes() -> Router<AppState> {
             .merge(delete_obj())
             .merge(add_to_department())
             .merge(add_to_user())
+            .merge(get_objs_by_department())
+            .merge(get_objs_by_org())
+            .merge(get_objs_by_user())
             .merge(add_to_organize()),
     )
 }

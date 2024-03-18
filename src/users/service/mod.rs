@@ -2,6 +2,7 @@ use crate::{
     error::ErrorResponse,
     helpers::id::generate_id,
     prisma::objective_on_department::department_id,
+    prisma::objective_on_user,
     users::model::response::{
         user_select, user_select_with_password, UserSelect, UserSelectWithPassword,
     },
@@ -17,6 +18,8 @@ use crate::prisma::{
     user::{self, SetParam, WhereParam},
     PrismaClient,
 };
+
+use super::model::response::user_id_on_obj;
 
 #[derive(Clone)]
 pub struct UserService {
@@ -160,5 +163,26 @@ impl UserService {
         let changes: Vec<SetParam> = vec![user::organize_id::set(Some(org_id))];
 
         self.update_user(user_id, changes).await
+    }
+
+    pub async fn get_users_by_obj(&self, obj_id: String) -> Result<Vec<UserSelect>, ErrorResponse> {
+        let user_ids: Vec<String> = self
+            .db
+            .objective_on_user()
+            .find_many(vec![objective_on_user::obj_id::equals(obj_id)])
+            .select(user_id_on_obj::select())
+            .exec()
+            .await?
+            .into_iter()
+            .map(|i| i.user_id)
+            .collect();
+        let mut users = vec![];
+
+        for id in user_ids {
+            let user = Self::get_user_by_id(self, id).await?;
+            users.push(user);
+        }
+
+        Ok(users)
     }
 }

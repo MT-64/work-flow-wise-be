@@ -4,7 +4,7 @@ use utoipa::ToSchema;
 
 //use crate::env::{hostname, port};
 
-use crate::prisma::user;
+use crate::prisma::{objective_on_user, user};
 
 user::select!(user_select {
     pk_user_id
@@ -28,6 +28,8 @@ user::select!(user_select_with_password {
     pk_user_id
     password
 });
+
+objective_on_user::select!(user_id_on_obj { user_id });
 
 pub type UserSelect = user_select::Data;
 pub type UserSelectWithPassword = user_select_with_password::Data;
