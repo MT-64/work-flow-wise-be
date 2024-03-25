@@ -47,6 +47,7 @@ pub fn create_obj() -> Router<AppState> {
             target,
             progress,
             deadline,
+            parent_objective_id,
         }: CreateObjRequest,
     ) -> WebResult {
         let mut params = vec![];
@@ -58,6 +59,8 @@ pub fn create_obj() -> Router<AppState> {
             "As low as possible" => prisma::ObjectiveType::AsLowAsPossible,
             _ => prisma::ObjectiveType::Other,
         };
+
+        params.push(objective::parent_objective_id::set(parent_objective_id));
 
         params.push(objective::description::set(description));
         params.push(objective::progress::set(progress));

@@ -1,5 +1,7 @@
+use crate::key_result::model::response::{keyresult_select, KrSelect};
 use crate::prisma::file::created_at::equals;
-use crate::prisma::{department, organize, period, user};
+use crate::prisma::objective::parent_objective_id;
+use crate::prisma::{department, key_result, organize, period, user};
 use crate::prisma::{objective_on_department, objective_on_org, objective_on_user};
 use crate::{error::ErrorResponse, helpers::id::generate_id, prisma::objective::deadline};
 use std::sync::Arc;
@@ -231,5 +233,54 @@ impl ObjectiveService {
         }
 
         Ok(objs)
+    }
+    #[allow(clippy::too_many_arguments)]
+    pub async fn get_child_objs_from_objs(
+        &self,
+        parent_id: Option<String>,
+    ) -> Result<Vec<ObjSelect>, ErrorResponse> {
+        let child_objs = self
+            .db
+            .objective()
+            .find_many(vec![objective::parent_objective_id::equals(parent_id)])
+            .select(objective_select::select())
+            .exec()
+            .await?;
+
+        Ok(child_objs)
+    }
+
+    pub async fn get_progress_obj(&self, obj_id: String) -> Result<f64, ErrorResponse> {
+        let krs: Vec<KrSelect> = self
+            .db
+            .key_result()
+            .find_many(vec![key_result::objective_id::equals(obj_id.clone())])
+            .select(keyresult_select::select())
+            .exec()
+            .await?;
+        let child_objs = self
+            .db
+            .objective()
+            .find_many(vec![objective::parent_objective_id::equals(Some(obj_id))])
+            .select(objective_select::select())
+            .exec()
+            .await?;
+
+        let mut progress: f64 = 0.0;
+        let mut counter: f64 = 0.0;
+
+        for kr in krs {
+            counter += 1.0;
+            progress += kr.progress as f64;
+        }
+
+        for obj in child_objs {
+            if let Some(obj_progress) = obj.progress {
+                counter += 1.0;
+                progress += obj_progress as f64;
+            }
+        }
+
+        Ok(progress / counter)
     }
 }
