@@ -17,6 +17,7 @@ use crate::{error::ErrorResponse, helpers::validation::validation_message, state
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "camelCase")]
 pub struct CreateObjRequest {
+    pub parent_objective_id: Option<String>,
     pub obj_type: String,
     pub period_id: String,
     pub supervisor_id: String,
@@ -35,6 +36,7 @@ impl FromRequest<AppState, Body> for CreateObjRequest {
         let Json(body) = Json::<CreateObjRequest>::from_request(req, state).await?;
 
         let CreateObjRequest {
+            parent_objective_id,
             obj_type,
             period_id,
             supervisor_id,
@@ -55,6 +57,8 @@ pub struct ObjQueryRequest {
     pub offset: Option<i64>,
     pub limit: Option<i64>,
     pub id: Option<String>,
+    pub supervisor_id: Option<String>,
+    pub parent_id: Option<String>,
     pub period_id: Option<String>,
     pub name: Option<String>,
     pub status: Option<bool>,

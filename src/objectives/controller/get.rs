@@ -1,4 +1,4 @@
-use crate::{prisma::{self, objective::{self, obj_type}}, objectives::model::request::ObjQueryRequest};
+use crate::{objectives::model::{request::ObjQueryRequest, response::ProgressResponse}, prisma::{self, objective::{self, obj_type}}};
 use axum::{extract::{State, Path}, routing::get, Router};
 use chrono::DateTime;
 use prisma_client_rust::query_core::schema_builder::constants::filters;
@@ -19,7 +19,9 @@ use crate::{
     ("offset" = inline(Option<i64>), Query, description = "Starting point"),
     ("limit" = inline(Option<i32>), Query, description = "Limit"),
     ("id" = inline(Option<String>), Query, description = "Obj id"),
-    ("period_id" = inline(Option<String>), Query, description = "Period id"),
+    ("parentId" = inline(Option<String>), Query, description = "Parent id"),
+    ("supervisorId" = inline(Option<String>), Query, description = "SuperVisor id"),
+    ("periodId" = inline(Option<String>), Query, description = "Period id"),
     ("name" = inline(Option<String>), Query, description = "Obj name"),
     ("status" = inline(Option<bool>), Query, description = "status"),
     ("progress" = inline(Option<f64>), Query, description = "progress"),
@@ -49,7 +51,7 @@ use crate::{
 pub fn get_objs() -> Router<AppState> {
     async fn get_objs_handler(
         State(AppState { obj_service, .. }): State<AppState>,
-        ObjQueryRequest {deadline,  offset, limit, id, name, status, progress, obj_type, created_at, updated_at, period_id }: ObjQueryRequest
+        ObjQueryRequest {supervisor_id,parent_id,deadline,  offset, limit, id, name, status, progress, obj_type, created_at, updated_at, period_id }: ObjQueryRequest
     ) -> WebResult {
         let offset = offset.unwrap_or(0);
 
@@ -65,6 +67,13 @@ pub fn get_objs() -> Router<AppState> {
 
         if let Some(id) = id {
             filters.push(objective::pk_objective_id::equals(id));
+        }
+
+        if let Some(parent_id) = parent_id {
+            filters.push(objective::parent_objective_id::equals(Some(parent_id)));
+        }
+        if let Some(supervisor_id) = supervisor_id {
+            filters.push(objective::supervisor_id::equals(supervisor_id));
         }
 
         if let Some(name) = name {
@@ -266,3 +275,82 @@ pub fn get_objs_by_user() -> Router<AppState> {
     }
     Router::new().route("/get_by_user/:user_id", get(get_objs_by_user_handler))
 }
+
+#[utoipa::path(
+  get,
+  tag = "Objective",
+  path = "/api/v1/objective/get_child_obj/(obj_parent_id}",
+  params(
+    ("obj_parent_id" = String, Path, description = "obj parent ID")
+  ),
+  responses(
+    (
+      status = 201,
+      description = "Get objective by parent id",
+      body = ObjectiveResponse,
+      example = json! (
+        {
+          "code": 200,
+          "message": "Get objective by parent id successfully",
+          "data": {
+          },
+          "error": ""
+        }
+      )
+    ),
+  )
+)]
+pub fn get_objs_by_parent() -> Router<AppState> {
+    async fn get_objs_by_parent_handler(
+        State(AppState { obj_service, .. }): State<AppState>,
+        Path(parent_id): Path<String>,
+    ) -> WebResult {
+        let objs: Vec<ObjectiveResponse> = obj_service
+            .get_child_objs_from_objs(Some(parent_id))
+            .await?.into_iter().map(|o| o.into()).collect();
+        Ok(WebResponse::ok("Get objective by parent id successfully", objs))
+    }
+    Router::new().route("/get_child_obj/:obj_parent_id", get(get_objs_by_parent_handler))
+}
+
+#[utoipa::path(
+  get,
+  tag = "Objective",
+  path = "/api/v1/objective/get_progress/(obj_parent_id}",
+  params(
+    ("obj_parent_id" = String, Path, description = "obj parent ID")
+  ),
+  responses(
+    (
+      status = 201,
+      description = "Get objective by parent id",
+      body = ProgressResponse,
+      example = json! (
+        {
+          "code": 200,
+          "message": "Get objective by parent id successfully",
+          "data": {
+          },
+          "error": ""
+        }
+      )
+    ),
+  )
+)]
+pub fn get_obj_progress() -> Router<AppState> {
+    async fn get_obj_progress_handler(
+        State(AppState { obj_service, .. }): State<AppState>,
+        Path(parent_id): Path<String>,
+    ) -> WebResult {
+        let progress: f64 = obj_service
+            .get_progress_obj(parent_id)
+            .await?;
+
+        Ok(WebResponse::ok("Get objective by parent id successfully", ProgressResponse{progress}))
+    }
+    Router::new().route("/get_progress/:obj_parent_id", get(get_obj_progress_handler))
+}
+
+
+
+

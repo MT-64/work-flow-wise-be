@@ -15,7 +15,7 @@ use crate::periods::model::request::{CreatePeriodRequest, UpdatePeriodRequest};
 
 use crate::department::model::response::DepartmentResponse;
 use crate::key_result::model::response::KeyResultResponse;
-use crate::objectives::model::response::ObjectiveResponse;
+use crate::objectives::model::response::{ObjectiveResponse, ProgressResponse};
 use crate::organize::model::response::OrganizeResponse;
 use crate::periods::model::response::PeriodResponse;
 use crate::users::model::response::UserResponse;
@@ -70,6 +70,7 @@ use crate::folder;
       DepartmentResponse,
       KeyResultResponse,
       PeriodResponse,
+      ProgressResponse,
       OrganizeResponse
 
     )
@@ -100,6 +101,8 @@ use crate::folder;
     objectives::controller::add_to_department::add_to_department,
     objectives::controller::add_to_user::add_to_user,
     objectives::controller::add_to_org::add_to_organize,
+    objectives::controller::get::get_objs_by_parent,
+    objectives::controller::get::get_obj_progress,
     
     ////////// department
     department::controller::get::get_department,

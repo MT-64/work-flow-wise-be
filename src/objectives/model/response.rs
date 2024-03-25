@@ -1,4 +1,6 @@
-use crate::prisma::{objective, objective_on_department, objective_on_org, objective_on_user};
+use crate::prisma::{
+    objective, objective::WhereParam, objective_on_department, objective_on_org, objective_on_user,
+};
 use chrono::Utc;
 use is_empty::IsEmpty;
 use serde::{Deserialize, Serialize};
@@ -14,6 +16,7 @@ objective::select!(objective_select {
     description
     target
     progress
+    parent_objective_id
     status
     created_at
     updated_at
@@ -42,6 +45,7 @@ pub struct ObjectiveResponse {
     pub deadline: i64,
     pub created_at: i64,
     pub updated_at: i64,
+    pub parent_objective_id: String,
 }
 
 impl From<ObjSelect> for ObjectiveResponse {
@@ -59,6 +63,7 @@ impl From<ObjSelect> for ObjectiveResponse {
             deadline,
             created_at,
             updated_at,
+            parent_objective_id,
         }: ObjSelect,
     ) -> Self {
         Self {
@@ -71,9 +76,17 @@ impl From<ObjSelect> for ObjectiveResponse {
             target,
             progress,
             status,
+            parent_objective_id: parent_objective_id.unwrap_or_default(),
             deadline: deadline.with_timezone(&Utc).timestamp(),
             created_at: created_at.with_timezone(&Utc).timestamp(),
             updated_at: updated_at.with_timezone(&Utc).timestamp(),
         }
     }
+}
+
+#[derive(Serialize, Deserialize, ToSchema)]
+#[serde(deny_unknown_fields)]
+#[serde(rename_all = "camelCase")]
+pub struct ProgressResponse {
+    pub progress: f64,
 }
