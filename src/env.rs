@@ -104,17 +104,12 @@ pub fn setup_cors() -> CorsLayer {
     CorsLayer::new()
         .allow_origin(Any)
         .expose_headers(Any)
+        .allow_credentials(true)
         .allow_headers([
-            // ORIGIN,
-            // CONTENT_TYPE,
-            // ACCEPT,
-            // ACCESS_CONTROL_ALLOW_ORIGIN,
-            // ACCESS_CONTROL_ALLOW_METHODS,
-            // ACCESS_CONTROL_ALLOW_HEADERS,
-            // ORIGIN,
+            ORIGIN,
             CONTENT_TYPE,
             ACCEPT,
-            // ACCESS_CONTROL_ALLOW_ORIGIN,
+            ACCESS_CONTROL_ALLOW_ORIGIN,
             ACCESS_CONTROL_ALLOW_METHODS,
             ACCESS_CONTROL_ALLOW_HEADERS,
             ACCESS_CONTROL_REQUEST_HEADERS,
