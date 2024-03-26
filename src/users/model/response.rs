@@ -110,3 +110,11 @@ impl From<UserSelect> for UserResponse {
         }
     }
 }
+
+#[derive(Serialize, Deserialize, ToSchema)]
+#[serde(rename_all = "camelCase")]
+pub struct LoginResponse {
+    pub user: UserResponse,
+    pub x_auth_access_token: String,
+    pub x_auth_refresh_token: String,
+}

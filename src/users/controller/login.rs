@@ -8,7 +8,7 @@ use axum::{
     Json, Router,
 };
 
-use crate::users::model::response::UserResponse;
+use crate::users::model::response::{LoginResponse, UserResponse};
 use serde::Deserialize;
 use utoipa::ToSchema;
 use validator::Validate;
@@ -78,22 +78,26 @@ pub fn login() -> Router<AppState> {
         let access_token = make_access_token(&found_user)?;
         let refresh_token = make_refresh_token(&found_user)?;
 
-        let response = (
-            StatusCode::OK,
-            AppendHeaders([
-                (
-                    HeaderName::from_static("x-auth-access-token"),
-                    HeaderValue::from_str(&access_token).unwrap(),
-                ),
-                (
-                    HeaderName::from_static("x-auth-refresh-token"),
-                    HeaderValue::from_str(&refresh_token).unwrap(),
-                ),
-            ]),
-            WebResponse::ok("Login successfully", UserResponse::from(found_user)),
-        );
-
-        Ok(response.into_response())
+        let response = LoginResponse {
+            user: found_user.into(),
+            x_auth_access_token: access_token,
+            x_auth_refresh_token: refresh_token,
+        };
+        // let response = (
+        //     StatusCode::OK,
+        //     AppendHeaders([
+        //         (
+        //             HeaderName::from_static("x-auth-access-token"),
+        //             HeaderValue::from_str(&access_token).unwrap(),
+        //         ),
+        //         (
+        //             HeaderName::from_static("x-auth-refresh-token"),
+        //             HeaderValue::from_str(&refresh_token).unwrap(),
+        //         ),
+        //     ]),
+        //     WebResponse::ok("Login successfully", UserResponse::from(found_user)),
+        // );
+        Ok(WebResponse::ok("Login successfully ", response))
     }
     Router::new().route("/login", post(login_handler))
 }
