@@ -18,6 +18,7 @@ use crate::{error::ErrorResponse, helpers::validation::validation_message, state
 #[serde(rename_all = "camelCase")]
 pub struct CreatePeriodRequest {
     pub name: String,
+    pub organize_id: String,
     pub start_date: i64,
     pub end_date: i64,
 }
@@ -31,6 +32,7 @@ impl FromRequest<AppState, Body> for CreatePeriodRequest {
 
         let CreatePeriodRequest {
             name,
+            organize_id,
             start_date,
             end_date,
         } = &body;
@@ -45,6 +47,7 @@ pub struct PeriodQueryRequest {
     pub offset: Option<i64>,
     pub limit: Option<i64>,
     pub id: Option<String>,
+    pub organize_id: Option<String>,
     pub name: Option<String>,
     pub start_date: Option<i64>,
     pub end_date: Option<i64>,

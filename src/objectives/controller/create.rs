@@ -41,11 +41,13 @@ pub fn create_obj() -> Router<AppState> {
         CreateObjRequest {
             obj_type,
             period_id,
+            supervisor_id,
             name,
             description,
             target,
             progress,
             deadline,
+            parent_objective_id,
         }: CreateObjRequest,
     ) -> WebResult {
         let mut params = vec![];
@@ -58,12 +60,14 @@ pub fn create_obj() -> Router<AppState> {
             _ => prisma::ObjectiveType::Other,
         };
 
+        params.push(objective::parent_objective_id::set(parent_objective_id));
+
         params.push(objective::description::set(description));
         params.push(objective::progress::set(progress));
         params.push(objective::obj_type::set(new_obj_type));
 
         let new_obj: ObjectiveResponse = obj_service
-            .create_obj(name, target, deadline, period_id, params)
+            .create_obj(name, target, deadline, period_id, supervisor_id, params)
             .await?
             .into();
 

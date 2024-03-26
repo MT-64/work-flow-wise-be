@@ -1,15 +1,17 @@
 use axum::http::{
     header::{
         ACCEPT, ACCESS_CONTROL_ALLOW_HEADERS, ACCESS_CONTROL_ALLOW_METHODS,
-        ACCESS_CONTROL_ALLOW_ORIGIN, CONTENT_TYPE, ORIGIN,
+        ACCESS_CONTROL_ALLOW_ORIGIN, ACCESS_CONTROL_EXPOSE_HEADERS, ACCESS_CONTROL_REQUEST_HEADERS,
+        ACCESS_CONTROL_REQUEST_METHOD, AUTHORIZATION, CONTENT_TYPE, ORIGIN,
     },
     HeaderValue, Method,
 };
 use dotenvy::var;
-use tower_http::cors::CorsLayer;
+use tower_http::cors::{Any, CorsLayer};
 use validator::{validate_url, ValidationError};
 
 use crate::helpers::validation::check_with;
+use axum::http::HeaderName;
 
 pub fn port() -> u16 {
     var("PORT")
@@ -100,19 +102,27 @@ fn check_aws_region(aws_region: &str) -> Result<(), ValidationError> {
 
 pub fn setup_cors() -> CorsLayer {
     CorsLayer::new()
-        .allow_credentials(true)
-        .allow_origin(
-            origin()
-                .parse::<HeaderValue>()
-                .expect("Failed to parse origin as HeaderValue"),
-        )
+        .allow_origin(Any)
+        .expose_headers(Any)
         .allow_headers([
-            ORIGIN,
+            // ORIGIN,
+            // CONTENT_TYPE,
+            // ACCEPT,
+            // ACCESS_CONTROL_ALLOW_ORIGIN,
+            // ACCESS_CONTROL_ALLOW_METHODS,
+            // ACCESS_CONTROL_ALLOW_HEADERS,
+            // ORIGIN,
             CONTENT_TYPE,
             ACCEPT,
-            ACCESS_CONTROL_ALLOW_ORIGIN,
+            // ACCESS_CONTROL_ALLOW_ORIGIN,
             ACCESS_CONTROL_ALLOW_METHODS,
             ACCESS_CONTROL_ALLOW_HEADERS,
+            ACCESS_CONTROL_REQUEST_HEADERS,
+            ACCESS_CONTROL_REQUEST_METHOD,
+            ACCESS_CONTROL_EXPOSE_HEADERS,
+            AUTHORIZATION,
+            HeaderName::from_lowercase(b"x-auth-refresh-token").unwrap(),
+            HeaderName::from_lowercase(b"x-auth-access-token").unwrap(),
         ])
         .allow_methods([
             Method::GET,

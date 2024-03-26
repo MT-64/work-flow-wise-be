@@ -1,4 +1,8 @@
-use crate::{error::ErrorResponse, helpers::id::generate_id, prisma::objective::deadline};
+use crate::{
+    error::ErrorResponse,
+    helpers::id::generate_id,
+    prisma::{objective::deadline, organize},
+};
 use std::sync::Arc;
 
 use argon2::{
@@ -64,6 +68,7 @@ impl PeriodService {
     pub async fn create_period(
         &self,
         name: String,
+        organize_id: String,
         start_date: i64,
         end_date: i64,
         params: Vec<SetParam>,
@@ -78,7 +83,14 @@ impl PeriodService {
 
         self.db
             .period()
-            .create(generate_id(), name, start_date, end_date, params)
+            .create(
+                generate_id(),
+                name,
+                start_date,
+                end_date,
+                organize::pk_organize_id::equals(organize_id),
+                params,
+            )
             .select(period_select::select())
             .exec()
             .await

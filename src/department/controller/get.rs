@@ -22,7 +22,7 @@ use crate::{
     ("id" = inline(Option<String>), Query, description = "Obj id"),
     ("name" = inline(Option<String>), Query, description = "Obj name"),
     ("organize_id" = inline(Option<String>), Query, description = "organize id"),
-    ("manager_id" = inline(Option<f64>), Query, description = "manager id"),
+    ("manager_id" = inline(Option<String>), Query, description = "manager id"),
   ),
   responses(
     (
@@ -92,7 +92,6 @@ pub fn get_departments() -> Router<AppState> {
             .into_iter()
             .map(|u| u.into())
             .collect();
-        tracing::info!("department: {:?}", departments);
         Ok(WebResponse::ok("Get departments successfully", departments))
     }
     Router::new().route("/", get(get_department_handler))

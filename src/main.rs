@@ -20,20 +20,28 @@ use users::service::UserService;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
+mod aws;
 mod department;
 mod env;
 mod error;
 mod extractors;
+mod file;
+mod file_version;
+mod folder;
 mod helpers;
+mod impls;
 mod key_result;
 mod objectives;
+mod organize;
 mod periods;
 mod prisma;
 mod response;
 mod routes;
 mod state;
 mod swagger;
+mod tag;
 mod users;
+mod validation;
 
 pub type WebResult = std::result::Result<Response, ErrorResponse>;
 #[tokio::main]

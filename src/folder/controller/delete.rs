@@ -1,0 +1,58 @@
+use axum::{extract::State, routing::delete, Router};
+
+use crate::{
+    error::ErrorResponse,
+    extractors::param::ParamId,
+    prisma::folder,
+    response::WebResponse,
+    users::model::{loggedin::LoggedInUser, response::UserSelect},
+    AppState, WebResult,
+};
+
+pub fn delete_folder() -> Router<AppState> {
+    async fn delete_folder_handler(
+        State(AppState {
+            folder_service,
+            storage,
+            ..
+        }): State<AppState>,
+        LoggedInUser(UserSelect {
+            pk_user_id: user_id,
+            ..
+        }): LoggedInUser,
+        ParamId(param_folder_id): ParamId,
+    ) -> WebResult {
+        /*
+            We use the get_folder_by_user_id to get the folder that the user owns / accessible to
+            This function will fail if the param_folder_id points to a folder that
+            the user does not own or accessible to
+        */
+        let target = folder_service
+            .get_folder_by_user_id(vec![folder::id::equals(param_folder_id)], user_id)
+            .await?;
+
+        /*
+            Check the status of the target folder
+            If the parent of the target folder is None
+            means that the target folder is a root folder of ours or some other user
+        */
+        if target.parent_folder_id.is_none() {
+            return Err(ErrorResponse::Forbidden);
+        }
+
+        let deleted_folder = folder_service.delete_folder(target.id).await?;
+
+        for (id, extension) in folder_service
+            .get_nested_files_from_folder(deleted_folder.id)
+            .await?
+        {
+            storage
+                .delete_file(&format!("{}/{}", id, extension.to_string()))
+                .await?;
+            storage.delete_folder(&format!("{}/", id)).await?;
+        }
+
+        Ok(WebResponse::ok("Folder deleted successfully", ()))
+    }
+    Router::new().route("/delete/:folder_id", delete(delete_folder_handler))
+}

@@ -46,35 +46,49 @@ model User {
   created_at         DateTime @default(now())
   updated_at         DateTime @default(now())
 
-  //  department      Department? @relation(fields: [department_id], references: [pk_department_id])
-  //  organize       Organize?    @relation(fields: [organize_id], references: [pk_organize_id])
-  //  objectives      Objective[]  @relation(fields: [pk_user_id], references: [pk_objective_id])
-  //  user_information UserInformation? @relation(fields: [pk_user_id], references: [pk_user_id])
-  KeyResult       KeyResult[]
-  ObjectiveOnUser ObjectiveOnUser[]
+  KeyResult         KeyResult[]
+  ObjectiveOnUser   ObjectiveOnUser[]
+  Organize          Organize[]
+  Folder            Folder[]
+  File              File[]
+  sharedToMeFolders Folder[]          @relation("FolderCollaborator")
+  sharedToMeFiles   File[]            @relation("FileCollaborator")
+  Tag               Tag[]
+
+  Objective Objective[]
 }
 
 model Department {
-  pk_department_id      String                  @id @unique
-  organize_id           String
-  manager_id            String?
-  name                  String                  @unique
+  pk_department_id String  @id @unique
+  organize_id      String
+  manager_id       String?
+  name             String  @unique
+
+  organize              Organize                @relation(fields: [organize_id], references: [pk_organize_id])
   ObjectiveOnDepartment ObjectiveOnDepartment[]
 }
 
 model Organize {
-  pk_organize_id String  @id @unique
-  owner_id       String?
-  name           String  @unique
+  pk_organize_id String @id @unique
+  owner_id       String
+  name           String @unique
   address        String
   contact        String
+
+  owner          User             @relation(fields: [owner_id], references: [pk_user_id])
+  Department     Department[]
+  Period         Period[]
+  ObjectiveOnOrg ObjectiveOnOrg[]
 }
 
 model Objective {
   pk_objective_id       String                  @id @unique
   period_id             String
+  parent_objective_id   String?
   period                Period                  @relation(fields: [period_id], references: [pk_period_id])
   obj_type              objective_type          @default(Other)
+  supervisor_id         String
+  user                  User                    @relation(fields: [supervisor_id], references: [pk_user_id])
   name                  String
   description           String?
   target                String
@@ -86,6 +100,7 @@ model Objective {
   KeyResult             KeyResult[]
   ObjectiveOnDepartment ObjectiveOnDepartment[]
   ObjectiveOnUser       ObjectiveOnUser[]
+  ObjectiveOnOrg        ObjectiveOnOrg[]
 }
 
 enum objective_type {
@@ -153,11 +168,14 @@ model KeyResult {
 }
 
 model Period {
-  pk_period_id String      @id @map("pk_period_id")
+  pk_period_id String   @id @map("pk_period_id")
+  organize_id  String
   name         String
   start_date   DateTime
   end_date     DateTime
-  Objective    Objective[]
+
+  Objective Objective[]
+  Organize  Organize    @relation(fields: [organize_id], references: [pk_organize_id])
 }
 
 model ObjectiveOnDepartment {
@@ -181,5 +199,102 @@ model ObjectiveOnUser {
 
   @@unique([obj_id, user_id], map: "uc_obj_user")
   @@index([obj_id], map: "obj_users_obj")
-  @@index([user_id], map: "obj_users_department")
+  @@index([user_id], map: "obj_users_user")
+}
+
+model ObjectiveOnOrg {
+  id        String    @id @default(uuid())
+  obj_id    String
+  org_id    String
+  objective Objective @relation(fields: [obj_id], references: [pk_objective_id])
+  org       Organize  @relation(fields: [org_id], references: [pk_organize_id])
+
+  @@unique([obj_id, org_id], map: "uc_obj_org")
+  @@index([obj_id], map: "obj_orgs_obj")
+  @@index([org_id], map: "obj_orgs_organize")
+}
+
+model Folder {
+  id String @id @default(uuid())
+
+  owner   User   @relation(fields: [ownerId], references: [pk_user_id], onDelete: Cascade)
+  ownerId String
+
+  collaborators User[] @relation("FolderCollaborator")
+
+  parentFolder   Folder? @relation("NestedFolders", fields: [parentFolderId], references: [id], onDelete: Cascade)
+  parentFolderId String? // Use create_unchecked and update_unchecked to make this work!!!
+
+  childFolders Folder[] @relation("NestedFolders")
+  childFiles   File[]
+
+  folderName String
+  visibility Visibility
+  tags       Tag[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([ownerId, parentFolderId, folderName])
+}
+
+model File {
+  id String @id @default(uuid())
+
+  owner   User   @relation(fields: [ownerId], references: [pk_user_id], onDelete: Cascade)
+  ownerId String
+
+  collaborators User[] @relation("FileCollaborator")
+
+  parentFolder   Folder @relation(fields: [parentFolderId], references: [id], onDelete: Cascade)
+  parentFolderId String
+
+  filename   String
+  extension  Extension
+  visibility Visibility
+  tags       Tag[]
+  versions   FileVersion[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([ownerId, parentFolderId, filename, extension])
+}
+
+model FileVersion {
+  id String @id @default(uuid())
+
+  file   File   @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  fileId String
+
+  versionNumber BigInt
+
+  @@unique([fileId, versionNumber])
+}
+
+model Tag {
+  id String @id @default(uuid())
+
+  tagName String
+
+  owner   User   @relation(fields: [ownerId], references: [pk_user_id], onDelete: Cascade)
+  ownerId String
+
+  files   File[]
+  folders Folder[]
+
+  @@unique([tagName, ownerId])
+}
+
+enum Visibility {
+  public
+  shared
+  private
+}
+
+enum Extension {
+  png
+  jpg
+  jpeg
+  svg
 }

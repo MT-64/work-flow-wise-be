@@ -10,7 +10,7 @@ use prisma_client_rust::query_core::schema_builder::constants::filters;
 
 use crate::prisma::{
     department::{self, SetParam, WhereParam},
-    PrismaClient,
+    organize, PrismaClient,
 };
 
 use super::model::response::{department_select, DepartmentSelect};
@@ -72,7 +72,12 @@ impl DepartmentService {
     ) -> Result<DepartmentSelect, ErrorResponse> {
         self.db
             .department()
-            .create(generate_id(), organize_id, name, params)
+            .create(
+                generate_id(),
+                name,
+                organize::pk_organize_id::equals(organize_id),
+                params,
+            )
             .select(department_select::select())
             .exec()
             .await
