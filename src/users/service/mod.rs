@@ -11,7 +11,7 @@ use std::sync::Arc;
 
 use argon2::{
     password_hash::{rand_core::OsRng, SaltString},
-    Argon2, PasswordHasher,
+    Argon2, PasswordHash, PasswordHasher, PasswordVerifier,
 };
 
 use crate::prisma::{
@@ -58,19 +58,39 @@ impl UserService {
         username: String,
         password: String,
     ) -> Result<UserSelect, ErrorResponse> {
-        let password = Argon2::default()
-            .hash_password(password.as_bytes(), &self.salt)?
-            .to_string();
-        self.db
+        let user = self
+            .db
             .user()
             .find_first(vec![
-                user::username::equals(username),
-                user::password::equals(password),
+                user::username::equals(username.clone()),
+                //                user::password::equals(password),
             ])
-            .select(user_select::select())
+            .select(user_select_with_password::select())
             .exec()
             .await?
-            .ok_or_else(|| ErrorResponse::NotFound)
+            .ok_or_else(|| ErrorResponse::NotFound)?;
+
+        match argon2::Argon2::verify_password(
+            &Argon2::default(),
+            password.as_bytes(),
+            &user
+                .password
+                .as_str()
+                .try_into()
+                .expect("password hash error"),
+        ) {
+            Ok(()) => {
+                return self
+                    .db
+                    .user()
+                    .find_first(vec![user::username::equals(username)])
+                    .select(user_select::select())
+                    .exec()
+                    .await?
+                    .ok_or_else(|| ErrorResponse::NotFound);
+            }
+            Err(_) => return Err(ErrorResponse::NotFound),
+        }
     }
 
     pub async fn get_user_by_id(&self, user_id: String) -> Result<UserSelect, ErrorResponse> {
