@@ -88,6 +88,7 @@ use crate::folder;
     users::controller::login::login,
     users::controller::add_to_department::add_to_department,
     users::controller::add_to_org::add_to_organize,
+    users::controller::get::get_user_by_jwt,
 
     /////////// objective
     objectives::controller::get::get_obj,

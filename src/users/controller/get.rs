@@ -254,3 +254,35 @@ pub fn get_users_by_obj() -> Router<AppState> {
     }
     Router::new().route("/get_by_user/:user_id", get(get_users_by_obj_handler))
 }
+
+#[utoipa::path(
+  get,
+  tag = "User",
+  path = "/api/v1/user/get_info_by_jwt",
+  responses(
+    (
+      status = 201,
+      description = "Get user by jwt",
+      body = ObjectiveResponse,
+      example = json! (
+        {
+          "code": 200,
+          "message": "Get user by jwt successfully",
+          "data": {
+          },
+          "error": ""
+        }
+      )
+    ),
+  )
+)]
+pub fn get_user_by_jwt() -> Router<AppState> {
+    async fn get_users_by_jwt_handler(
+        State(AppState { user_service, .. }): State<AppState>,
+        LoggedInUser(user): LoggedInUser,
+    ) -> WebResult {
+        let user: UserResponse = user_service.get_user_by_id(user.pk_user_id).await?.into();
+        Ok(WebResponse::ok("Get users by jwt successfully", user))
+    }
+    Router::new().route("/get_info_by_jwt", get(get_users_by_jwt_handler))
+}
