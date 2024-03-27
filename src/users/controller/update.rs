@@ -19,7 +19,6 @@ use crate::{
   path = "/api/v1/user/update",
   request_body(
     content = UpdateUserRequest,
-  content_type = "multipart/form-data",
     description = "Update user request",
   ),
   responses(
@@ -62,6 +61,11 @@ pub fn update_user() -> Router<AppState> {
             password,
             new_password,
             role,
+            first_name,
+            last_name,
+            gender,
+            introduction_brief,
+            image,
             ..
         }: UpdateUserRequest,
     ) -> WebResult {
@@ -79,6 +83,21 @@ pub fn update_user() -> Router<AppState> {
 
         if let Some(new_role) = role {
             changes.push(user::role::set(new_role))
+        }
+        if let Some(first_name) = first_name {
+            changes.push(user::first_name::set(Some(first_name)))
+        }
+        if let Some(last_name) = last_name {
+            changes.push(user::last_name::set(Some(last_name)))
+        }
+        if let Some(gender) = gender {
+            changes.push(user::gender::set(gender))
+        }
+        if let Some(introduction_brief) = introduction_brief {
+            changes.push(user::introduction_brief::set(Some(introduction_brief)))
+        }
+        if let Some(image) = image {
+            changes.push(user::image::set(Some(image)))
         }
 
         let updated_user: UserResponse = user_service
