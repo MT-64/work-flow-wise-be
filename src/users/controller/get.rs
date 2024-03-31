@@ -159,6 +159,7 @@ pub fn get_users() -> Router<AppState> {
             .into_iter()
             .map(|u| u.into())
             .collect();
+
         Ok(WebResponse::ok("Get users successfully", users))
     }
     Router::new().route("/", get(get_users_handler))

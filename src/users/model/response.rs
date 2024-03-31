@@ -41,7 +41,6 @@ pub enum Role {
     Moderator = 2,
     Admin = 3,
 }
-
 impl From<i32> for Role {
     fn from(role: i32) -> Self {
         match role {
