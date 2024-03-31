@@ -41,7 +41,6 @@ pub enum Role {
     Moderator = 2,
     Admin = 3,
 }
-
 impl From<i32> for Role {
     fn from(role: i32) -> Self {
         match role {
@@ -109,4 +108,12 @@ impl From<UserSelect> for UserResponse {
             updated_at: updated_at.with_timezone(&Utc).timestamp(),
         }
     }
+}
+
+#[derive(Serialize, Deserialize, ToSchema)]
+#[serde(rename_all = "camelCase")]
+pub struct LoginResponse {
+    pub user: UserResponse,
+    pub x_auth_access_token: String,
+    pub x_auth_refresh_token: String,
 }

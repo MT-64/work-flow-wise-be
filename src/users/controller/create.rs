@@ -50,7 +50,11 @@ use crate::{
 )]
 pub fn create_user() -> Router<AppState> {
     async fn create_user_handler(
-        State(AppState { user_service, .. }): State<AppState>,
+        State(AppState {
+            folder_service,
+            user_service,
+            ..
+        }): State<AppState>,
         CreateUserRequest {
             username,
             email,
@@ -63,9 +67,9 @@ pub fn create_user() -> Router<AppState> {
             .await?
             .into();
 
-        // folder_service
-        //     .create_root_folder(new_user.pk_user_id.clone())
-        //     .await?;
+        folder_service
+            .create_root_folder(new_user.id.clone())
+            .await?;
 
         Ok(WebResponse::created(
             "Created user successfully",

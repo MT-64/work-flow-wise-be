@@ -8,7 +8,7 @@ use axum::{
     Json, Router,
 };
 
-use crate::users::model::response::UserResponse;
+use crate::users::model::response::{LoginResponse, UserResponse};
 use serde::Deserialize;
 use utoipa::ToSchema;
 use validator::Validate;
@@ -78,6 +78,11 @@ pub fn login() -> Router<AppState> {
         let access_token = make_access_token(&found_user)?;
         let refresh_token = make_refresh_token(&found_user)?;
 
+        let login_response = LoginResponse {
+            user: found_user.into(),
+            x_auth_access_token: access_token.clone(),
+            x_auth_refresh_token: refresh_token.clone(),
+        };
         let response = (
             StatusCode::OK,
             AppendHeaders([
@@ -90,7 +95,7 @@ pub fn login() -> Router<AppState> {
                     HeaderValue::from_str(&refresh_token).unwrap(),
                 ),
             ]),
-            WebResponse::ok("Login successfully", UserResponse::from(found_user)),
+            WebResponse::ok("Login successfully", login_response),
         );
 
         Ok(response.into_response())

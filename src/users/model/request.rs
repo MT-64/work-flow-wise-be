@@ -100,6 +100,12 @@ pub struct UpdateUserRequest {
 
     #[validate(custom = "check_password")]
     pub confirm_new_password: Option<String>,
+
+    pub first_name: Option<String>,
+    pub last_name: Option<String>,
+    pub gender: Option<crate::prisma::Gender>,
+    pub introduction_brief: Option<String>,
+    pub image: Option<String>,
 }
 
 #[async_trait]
@@ -116,6 +122,15 @@ impl FromRequest<AppState, Body> for UpdateUserRequest {
         let UpdateUserRequest {
             new_password,
             confirm_new_password,
+            username,
+            email,
+            password,
+            role,
+            first_name,
+            last_name,
+            gender,
+            introduction_brief,
+            image,
             ..
         } = &body;
 
