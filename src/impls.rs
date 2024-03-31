@@ -38,6 +38,8 @@ impl TryFrom<&str> for Extension {
             "jpg" => Extension::Jpg,
             "jpeg" => Extension::Jpeg,
             "svg" => Extension::Svg,
+            "xlsx" => Extension::Xlsx,
+            "docx" => Extension::Docx,
             _ => return Err(validation_message("Extension not supported").into()),
         };
         Ok(extension)
