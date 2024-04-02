@@ -6,7 +6,7 @@ use axum::{
 
 use crate::{
     objectives::model::{request::CreateObjRequest, response::ObjectiveResponse},
-    prisma::{self, objective},
+    prisma::{self, objective, user},
     response::WebResponse,
     state::AppState,
     WebResult,
@@ -38,10 +38,31 @@ use crate::{
 )]
 pub fn add_to_organize() -> Router<AppState> {
     async fn add_to_organize_handler(
-        State(AppState { obj_service, .. }): State<AppState>,
+        State(AppState {
+            obj_service,
+            user_service,
+            notification_service,
+            ..
+        }): State<AppState>,
         Path((obj_id, org_id)): Path<(String, String)>,
     ) -> WebResult {
-        obj_service.add_to_org(obj_id, org_id).await?;
+        obj_service
+            .add_to_org(obj_id.clone(), org_id.clone())
+            .await?;
+
+        let obj = obj_service.get_obj_by_id(obj_id).await?;
+
+        let users = user_service
+            .get_users(vec![user::organize_id::equals(Some(org_id))], 0, 100)
+            .await?;
+
+        let message = format!(r#"New objective {} is assigned to you"#, obj.name);
+
+        for user in users {
+            notification_service
+                .create_noti(user.pk_user_id, message.clone(), vec![])
+                .await?;
+        }
 
         Ok(WebResponse::created(
             "Add objective to organize sucessfully",

@@ -3,9 +3,10 @@ use std::sync::Arc;
 use crate::{
     aws::S3, department::service::DepartmentService, file::service::FileService,
     file_version::service::FileVersionService, folder::service::FolderService,
-    key_result::service::KeyResultService, objectives::service::ObjectiveService,
-    organize::service::OrganizeService, periods::service::PeriodService, prisma::PrismaClient,
-    tag::service::TagService, users::service::UserService,
+    key_result::service::KeyResultService, notification::service::NotificationService,
+    objectives::service::ObjectiveService, organize::service::OrganizeService,
+    periods::service::PeriodService, prisma::PrismaClient, tag::service::TagService,
+    users::service::UserService,
 };
 
 #[derive(Clone)]
@@ -13,6 +14,7 @@ pub struct AppState {
     pub user_service: UserService,
     pub obj_service: ObjectiveService,
     pub department_service: DepartmentService,
+    pub notification_service: NotificationService,
     pub keyresult_service: KeyResultService,
     pub period_service: PeriodService,
     pub organize_service: OrganizeService,
@@ -29,6 +31,7 @@ impl AppState {
             user_service: UserService::init(&client),
             obj_service: ObjectiveService::init(&client),
             department_service: DepartmentService::init(&client),
+            notification_service: NotificationService::init(&client),
             keyresult_service: KeyResultService::init(&client),
             period_service: PeriodService::init(&client),
             organize_service: OrganizeService::init(&client),

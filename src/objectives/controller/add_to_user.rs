@@ -38,10 +38,23 @@ use crate::{
 )]
 pub fn add_to_user() -> Router<AppState> {
     async fn add_to_user_handler(
-        State(AppState { obj_service, .. }): State<AppState>,
+        State(AppState {
+            notification_service,
+            obj_service,
+            ..
+        }): State<AppState>,
         Path((obj_id, user_id)): Path<(String, String)>,
     ) -> WebResult {
-        obj_service.add_to_user(obj_id, user_id).await?;
+        obj_service
+            .add_to_user(obj_id.clone(), user_id.clone())
+            .await?;
+
+        let obj = obj_service.get_obj_by_id(obj_id).await?;
+
+        let message = format!(r#"New objective {} is assigned to you"#, obj.name);
+        notification_service
+            .create_noti(user_id, message.clone(), vec![])
+            .await?;
 
         Ok(WebResponse::created(
             "Add objective to user sucessfully",

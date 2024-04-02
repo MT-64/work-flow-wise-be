@@ -172,7 +172,7 @@ impl FromRequest<AppState, Body> for LoginRequest {
     }
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct UserQueryRequest {
     pub offset: Option<i64>,
@@ -200,5 +200,43 @@ impl FromRequestParts<AppState> for UserQueryRequest {
         let Query(user_query) = Query::<UserQueryRequest>::from_request_parts(parts, state).await?;
 
         Ok(user_query)
+    }
+}
+
+#[derive(Deserialize, Debug, ToSchema)]
+#[serde(rename_all = "camelCase")]
+pub struct AddMultipleUserToDepartment {
+    pub list_user: Vec<String>,
+    pub department_id: String,
+}
+
+#[async_trait]
+impl FromRequest<AppState, Body> for AddMultipleUserToDepartment {
+    type Rejection = ErrorResponse;
+
+    async fn from_request(req: Request<Body>, state: &AppState) -> Result<Self, Self::Rejection> {
+        let Json(body) = Json::<AddMultipleUserToDepartment>::from_request(req, state).await?;
+        let AddMultipleUserToDepartment {
+            list_user,
+            department_id,
+        } = &body;
+        Ok(body)
+    }
+}
+#[derive(Deserialize, Debug, ToSchema)]
+#[serde(rename_all = "camelCase")]
+pub struct AddMultipleUserToOrg {
+    pub list_user: Vec<String>,
+    pub org_id: String,
+}
+
+#[async_trait]
+impl FromRequest<AppState, Body> for AddMultipleUserToOrg {
+    type Rejection = ErrorResponse;
+
+    async fn from_request(req: Request<Body>, state: &AppState) -> Result<Self, Self::Rejection> {
+        let Json(body) = Json::<AddMultipleUserToOrg>::from_request(req, state).await?;
+        let AddMultipleUserToOrg { list_user, org_id } = &body;
+        Ok(body)
     }
 }

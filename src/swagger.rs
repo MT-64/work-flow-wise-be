@@ -4,7 +4,7 @@ use utoipa::{
 };
 
 use crate::users::model::request::{
-    CreateUserRequest, DeleteUserRequest, LoginRequest, UpdateUserRequest,
+    CreateUserRequest, DeleteUserRequest, LoginRequest, UpdateUserRequest, UserQueryRequest, AddMultipleUserToDepartment, AddMultipleUserToOrg,
 };
 
 use crate::department::model::request::{CreateDepartmentRequest, UpdateDepartmentRequest};
@@ -12,6 +12,7 @@ use crate::key_result::model::request::{CreateKrRequest, UpdateKrRequest};
 use crate::objectives::model::request::{CreateObjRequest, UpdateObjRequest};
 use crate::organize::model::request::{CreateOrganizeRequest, UpdateOrganizeRequest};
 use crate::periods::model::request::{CreatePeriodRequest, UpdatePeriodRequest};
+use crate::notification::model::request::NotificationQueryRequest;
 
 use crate::department::model::response::DepartmentResponse;
 use crate::key_result::model::response::KeyResultResponse;
@@ -20,6 +21,7 @@ use crate::organize::model::response::OrganizeResponse;
 use crate::periods::model::response::PeriodResponse;
 use crate::users::model::response::UserResponse;
 use crate::file::model::{select::File, query::FileQuery};
+use crate::notification::model::response::NotificationResponse;
 
 use crate::department;
 use crate::key_result;
@@ -29,6 +31,7 @@ use crate::periods;
 use crate::users;
 use crate::file;
 use crate::folder;
+use crate::notification;
 
 #[derive(OpenApi)]
 #[openapi(
@@ -47,6 +50,9 @@ use crate::folder;
       UpdateUserRequest,
       DeleteUserRequest,
       LoginRequest,
+      UserQueryRequest, 
+      AddMultipleUserToDepartment, 
+      AddMultipleUserToOrg,
       // Objective
       CreateObjRequest,
       UpdateObjRequest,
@@ -64,6 +70,8 @@ use crate::folder;
       UpdateOrganizeRequest,
       //File 
 
+      // Notification
+      NotificationQueryRequest,
       // Responses
       UserResponse,
       ObjectiveResponse,
@@ -71,7 +79,8 @@ use crate::folder;
       KeyResultResponse,
       PeriodResponse,
       ProgressResponse,
-      OrganizeResponse
+      OrganizeResponse,
+      NotificationResponse
 
     )
   ),
@@ -87,7 +96,9 @@ use crate::folder;
     users::controller::delete::delete_user,
     users::controller::login::login,
     users::controller::add_to_department::add_to_department,
+    users::controller::add_to_department::add_multiple_to_department,
     users::controller::add_to_org::add_to_organize,
+    users::controller::add_to_org::add_multiple_to_org,
     users::controller::get::get_user_by_jwt,
 
     /////////// objective
@@ -135,6 +146,10 @@ use crate::folder;
 
     //////// file 
     file::controller::get::my::get_my_files,
+    /////// notification
+    notification::controller::get::get_noties,
+    notification::controller::update::update_noti,
+
 
 
 
