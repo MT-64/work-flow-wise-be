@@ -31,6 +31,7 @@ mod folder;
 mod helpers;
 mod impls;
 mod key_result;
+mod notification;
 mod objectives;
 mod organize;
 mod periods;

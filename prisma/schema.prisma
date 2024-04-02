@@ -135,8 +135,9 @@ model OAuthStateStorage {
 model Notification {
   pk_notification_id String  @id @unique
   user_id            String
-  message            String?
+  message            String
   status             Boolean @default(false)
+  timestamp          DateTime  @default(now())
 }
 
 model KeyResult {
