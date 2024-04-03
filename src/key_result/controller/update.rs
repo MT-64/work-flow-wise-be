@@ -4,10 +4,15 @@ use axum::{
     Router,
 };
 use chrono::DateTime;
+use prisma_client_rust::PrismaValue;
 
 use crate::{
+    error::ErrorResponse,
     helpers::validation::validation_message,
-    key_result::model::{request::UpdateKrRequest, response::KeyResultResponse},
+    key_result::model::{
+        request::{GradingKr, UpdateKrRequest},
+        response::KeyResultResponse,
+    },
     prisma::key_result::{self, deadline},
     response::WebResponse,
     state::AppState,
@@ -25,7 +30,6 @@ use crate::{
 
   request_body(
     content = UpdateKrRequest,
-  content_type = "multipart/form-data",
     description = "Update keyresult request",
   ),
   responses(
@@ -93,4 +97,64 @@ pub fn update_kr() -> Router<AppState> {
         Ok(WebResponse::ok("Update keyresult successfully", updated_kr))
     }
     Router::new().route("/update/:kr_id", put(update_kr_handler))
+}
+
+#[utoipa::path(
+  put,
+  tag = "Key Result",
+  path = "/api/v1/kr/grading_kr/{kr_id}",
+  params(
+    ("kr_id" = String, Path, description = "Keyresult ID")
+  ),
+
+  request_body(
+    content = GradingKr,
+    description = "Update keyresult request",
+  ),
+  responses(
+    (
+      status = 200,
+      description = "Updated keyresult successfully",
+      body = KeyResultResponse,
+      example = json!(
+        {
+          "code": 200,
+          "message": "Updated keyresult successfully",
+          "data": {
+                     },
+          "error": ""
+        }
+      )
+    )
+  )
+)]
+pub fn grading_kr() -> Router<AppState> {
+    async fn grading_kr_handler(
+        State(AppState {
+            obj_service,
+            keyresult_service,
+            ..
+        }): State<AppState>,
+        Path(kr_id): Path<String>,
+        LoggedInUser(user): LoggedInUser,
+        GradingKr { grade }: GradingKr,
+    ) -> WebResult {
+        let mut changes = vec![];
+
+        let kr = keyresult_service.get_kr_by_id(kr_id.clone()).await?;
+
+        let obj = obj_service.get_obj_by_id(kr.objective_id).await?;
+
+        if obj.supervisor_id != user.pk_user_id {
+            return Err(ErrorResponse::Permissions);
+        }
+
+        changes.push(key_result::supervior_grade::set(grade));
+        changes.push(key_result::status::set(true));
+
+        let updated_kr: KeyResultResponse =
+            keyresult_service.update_kr(kr_id, changes).await?.into();
+        Ok(WebResponse::ok("Update keyresult successfully", updated_kr))
+    }
+    Router::new().route("/grading_kr/:kr_id", put(grading_kr_handler))
 }
