@@ -115,3 +115,23 @@ impl FromRequest<AppState, Body> for UpdateKrRequest {
         Ok(body)
     }
 }
+
+#[derive(Debug, Deserialize, Validate, ToSchema)]
+#[serde(deny_unknown_fields)]
+#[serde(rename_all = "camelCase")]
+pub struct GradingKr {
+    pub grade: f64,
+}
+
+#[async_trait]
+impl FromRequest<AppState, Body> for GradingKr {
+    type Rejection = ErrorResponse;
+
+    async fn from_request(req: Request<Body>, state: &AppState) -> Result<Self, Self::Rejection> {
+        let Json(body) = Json::<GradingKr>::from_request(req, state).await?;
+
+        let GradingKr { grade } = &body;
+
+        Ok(body)
+    }
+}

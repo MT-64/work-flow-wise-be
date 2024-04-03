@@ -154,7 +154,9 @@ model KeyResult {
 
   progress Float @default(0)
 
-  status Boolean @default(true)
+  status Boolean @default(false)
+
+  supervior_grade Float @default(0)
 
   metric String
 

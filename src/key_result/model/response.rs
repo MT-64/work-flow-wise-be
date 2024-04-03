@@ -19,6 +19,7 @@ key_result::select!(keyresult_select {
     deadline
     created_at
     updated_at
+    supervior_grade
 });
 
 pub type KrSelect = keyresult_select::Data;
@@ -39,11 +40,13 @@ pub struct KeyResultResponse {
     pub deadline: i64,
     pub created_at: i64,
     pub updated_at: i64,
+    pub supervior_grade: f64,
 }
 
 impl From<KrSelect> for KeyResultResponse {
     fn from(
         KrSelect {
+            supervior_grade,
             pk_kr_id,
             objective_id,
             name,
@@ -60,6 +63,7 @@ impl From<KrSelect> for KeyResultResponse {
     ) -> Self {
         Self {
             keyresult_id: pk_kr_id,
+            supervior_grade,
             objective_id,
             user_id,
             name,

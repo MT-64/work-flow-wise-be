@@ -8,7 +8,7 @@ use crate::users::model::request::{
 };
 
 use crate::department::model::request::{CreateDepartmentRequest, UpdateDepartmentRequest};
-use crate::key_result::model::request::{CreateKrRequest, UpdateKrRequest};
+use crate::key_result::model::request::{CreateKrRequest, UpdateKrRequest, GradingKr};
 use crate::objectives::model::request::{CreateObjRequest, UpdateObjRequest};
 use crate::organize::model::request::{CreateOrganizeRequest, UpdateOrganizeRequest};
 use crate::periods::model::request::{CreatePeriodRequest, UpdatePeriodRequest};
@@ -62,6 +62,7 @@ use crate::notification;
       //Keyresult
       CreateKrRequest,
       UpdateKrRequest,
+      GradingKr,
       // Period
       CreatePeriodRequest,
       UpdatePeriodRequest,
@@ -129,6 +130,7 @@ use crate::notification;
     key_result::controller::create::create_kr,
     key_result::controller::delete::delete_kr,
     key_result::controller::update::update_kr,
+    key_result::controller::update::grading_kr,
 
     ////////// period
     periods::controller::get::get_periods,
