@@ -21,6 +21,8 @@ objective::select!(objective_select {
     created_at
     updated_at
     deadline
+    achievement
+    metric
 });
 
 objective_on_department::select!(obj_id_on_department_select { obj_id });
@@ -29,6 +31,39 @@ objective_on_user::select!(obj_id_on_user { obj_id });
 
 pub type ObjSelect = objective_select::Data;
 
+#[derive(Serialize, Deserialize, ToSchema, Debug)]
+pub enum Achievement {
+    Achievement = 0,
+    NonAchievement = 1,
+    Exceed = 2,
+}
+impl From<i32> for Achievement {
+    fn from(achievement: i32) -> Self {
+        match achievement {
+            1 => Self::NonAchievement,
+            2 => Self::Exceed,
+            _ => Self::Achievement,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, ToSchema, Debug)]
+pub enum ObjectiveMetric {
+    Quantity = 0,
+    Percent = 1,
+    Time = 2,
+    Money = 3,
+}
+impl From<i32> for ObjectiveMetric {
+    fn from(metric: i32) -> Self {
+        match metric {
+            1 => Self::Percent,
+            2 => Self::Time,
+            3 => Self::Money,
+            _ => Self::Quantity,
+        }
+    }
+}
 #[derive(Serialize, Deserialize, ToSchema)]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "camelCase")]
@@ -46,6 +81,8 @@ pub struct ObjectiveResponse {
     pub created_at: i64,
     pub updated_at: i64,
     pub parent_objective_id: String,
+    pub achievement: crate::prisma::Achievement,
+    pub metric: crate::prisma::ObjectiveMetric,
 }
 
 impl From<ObjSelect> for ObjectiveResponse {
@@ -64,6 +101,8 @@ impl From<ObjSelect> for ObjectiveResponse {
             created_at,
             updated_at,
             parent_objective_id,
+            achievement,
+            metric,
         }: ObjSelect,
     ) -> Self {
         Self {
@@ -71,6 +110,8 @@ impl From<ObjSelect> for ObjectiveResponse {
             period_id,
             supervisor_id,
             obj_type,
+            metric,
+            achievement: achievement.unwrap_or(crate::prisma::Achievement::Other),
             name,
             description,
             target,

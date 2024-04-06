@@ -116,6 +116,7 @@ use crate::notification;
     objectives::controller::add_to_org::add_to_organize,
     objectives::controller::get::get_objs_by_parent,
     objectives::controller::get::get_obj_progress,
+    objectives::controller::check_state::check_state_obj,
     
     ////////// department
     department::controller::get::get_department,

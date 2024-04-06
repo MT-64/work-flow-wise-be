@@ -48,6 +48,7 @@ pub fn create_obj() -> Router<AppState> {
             progress,
             deadline,
             parent_objective_id,
+            metric,
         }: CreateObjRequest,
     ) -> WebResult {
         let mut params = vec![];
@@ -67,7 +68,15 @@ pub fn create_obj() -> Router<AppState> {
         params.push(objective::obj_type::set(new_obj_type));
 
         let new_obj: ObjectiveResponse = obj_service
-            .create_obj(name, target, deadline, period_id, supervisor_id, params)
+            .create_obj(
+                name,
+                target,
+                deadline,
+                period_id,
+                supervisor_id,
+                metric,
+                params,
+            )
             .await?
             .into();
 
