@@ -13,7 +13,10 @@ use crate::{
         request::{GradingKr, UpdateKrRequest},
         response::KeyResultResponse,
     },
-    prisma::key_result::{self, deadline},
+    prisma::{
+        key_result::{self, deadline},
+        objective,
+    },
     response::WebResponse,
     state::AppState,
     users::model::loggedin::LoggedInUser,
@@ -149,11 +152,35 @@ pub fn grading_kr() -> Router<AppState> {
             return Err(ErrorResponse::Permissions);
         }
 
-        changes.push(key_result::supervisor_grade::set(grade));
+        changes.push(key_result::supervisor_grade::set(grade.clone()));
         changes.push(key_result::status::set(true));
 
         let updated_kr: KeyResultResponse =
             keyresult_service.update_kr(kr_id, changes).await?.into();
+
+        let krs = keyresult_service
+            .get_krs(
+                vec![key_result::objective_id::equals(
+                    obj.pk_objective_id.clone(),
+                )],
+                0,
+                500,
+            )
+            .await?;
+        let mut progress_obj = 0.0;
+        let mut weight = 0.0;
+        for kr in &krs {
+            progress_obj += kr.supervisor_grade;
+            weight += kr.target;
+        }
+
+        let _ = obj_service
+            .update_obj(
+                obj.pk_objective_id,
+                vec![objective::progress::set(Some(progress_obj / weight))],
+            )
+            .await?;
+
         Ok(WebResponse::ok("Update keyresult successfully", updated_kr))
     }
     Router::new().route("/grading_kr/:kr_id", put(grading_kr_handler))
