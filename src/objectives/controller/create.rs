@@ -2,7 +2,10 @@ use axum::{extract::State, routing::post, Router};
 
 use crate::{
     objectives::model::{request::CreateObjRequest, response::ObjectiveResponse},
-    prisma::{self, objective},
+    prisma::{
+        self,
+        objective::{self, obj_for},
+    },
     response::WebResponse,
     state::AppState,
     WebResult,
@@ -49,6 +52,8 @@ pub fn create_obj() -> Router<AppState> {
             deadline,
             parent_objective_id,
             metric,
+            obj_for,
+            child_ids,
         }: CreateObjRequest,
     ) -> WebResult {
         let mut params = vec![];
@@ -59,6 +64,21 @@ pub fn create_obj() -> Router<AppState> {
             "As high as possible" => prisma::ObjectiveType::AsHighAsPossible,
             "As low as possible" => prisma::ObjectiveType::AsLowAsPossible,
             _ => prisma::ObjectiveType::Other,
+        };
+
+        let new_obj_for = match obj_for.clone().trim() {
+            "User" => prisma::ObjectiveFor::User,
+            "Department" => prisma::ObjectiveFor::Department,
+            "Organize" => prisma::ObjectiveFor::Organize,
+            _ => unreachable!(),
+        };
+
+        let new_metric = match metric.trim() {
+            "Quantity" => prisma::ObjectiveMetric::Quantity,
+            "Percent" => prisma::ObjectiveMetric::Percent,
+            "Time" => prisma::ObjectiveMetric::Time,
+            "Money" => prisma::ObjectiveMetric::Money,
+            _ => unreachable!(),
         };
 
         params.push(objective::parent_objective_id::set(parent_objective_id));
@@ -74,11 +94,31 @@ pub fn create_obj() -> Router<AppState> {
                 deadline,
                 period_id,
                 supervisor_id,
-                metric,
+                new_obj_for.clone(),
+                new_metric,
                 params,
             )
             .await?
             .into();
+        match new_obj_for {
+            crate::prisma::ObjectiveFor::User => {
+                for id in child_ids {
+                    let _ = obj_service.add_to_user(new_obj.obj_id.clone(), id).await?;
+                }
+            }
+            crate::prisma::ObjectiveFor::Department => {
+                for id in child_ids {
+                    let _ = obj_service
+                        .add_to_department(new_obj.obj_id.clone(), id)
+                        .await?;
+                }
+            }
+            crate::prisma::ObjectiveFor::Organize => {
+                for id in child_ids {
+                    let _ = obj_service.add_to_user(new_obj.obj_id.clone(), id).await?;
+                }
+            }
+        }
 
         Ok(WebResponse::created(
             "Created objective sucessfully",

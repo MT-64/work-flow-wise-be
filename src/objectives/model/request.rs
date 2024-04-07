@@ -23,10 +23,12 @@ pub struct CreateObjRequest {
     pub supervisor_id: String,
     pub name: String,
     pub description: Option<String>,
-    pub target: String,
+    pub target: f64,
     pub progress: Option<f64>,
     pub deadline: i64,
-    pub metric: crate::prisma::ObjectiveMetric,
+    pub obj_for: String,
+    pub metric: String,
+    pub child_ids: Vec<String>,
 }
 
 #[async_trait]
@@ -47,6 +49,8 @@ impl FromRequest<AppState, Body> for CreateObjRequest {
             progress,
             deadline,
             metric,
+            obj_for,
+            child_ids,
         } = &body;
 
         Ok(body)
@@ -91,7 +95,7 @@ pub struct UpdateObjRequest {
     pub name: Option<String>,
     pub description: Option<String>,
     pub period_id: Option<String>,
-    pub target: Option<String>,
+    pub target: Option<f64>,
     pub progress: Option<f64>,
     pub deadline: Option<i64>,
     pub achievement: Option<crate::prisma::Achievement>,

@@ -23,6 +23,7 @@ objective::select!(objective_select {
     deadline
     achievement
     metric
+    obj_for
 });
 
 objective_on_department::select!(obj_id_on_department_select { obj_id });
@@ -74,7 +75,7 @@ pub struct ObjectiveResponse {
     pub obj_type: crate::prisma::ObjectiveType,
     pub name: String,
     pub description: Option<String>,
-    pub target: String,
+    pub target: f64,
     pub progress: Option<f64>,
     pub status: bool,
     pub deadline: i64,
@@ -83,6 +84,7 @@ pub struct ObjectiveResponse {
     pub parent_objective_id: String,
     pub achievement: crate::prisma::Achievement,
     pub metric: crate::prisma::ObjectiveMetric,
+    pub obj_for: crate::prisma::ObjectiveFor,
 }
 
 impl From<ObjSelect> for ObjectiveResponse {
@@ -103,6 +105,7 @@ impl From<ObjSelect> for ObjectiveResponse {
             parent_objective_id,
             achievement,
             metric,
+            obj_for,
         }: ObjSelect,
     ) -> Self {
         Self {
@@ -110,6 +113,7 @@ impl From<ObjSelect> for ObjectiveResponse {
             period_id,
             supervisor_id,
             obj_type,
+            obj_for,
             metric,
             achievement: achievement.unwrap_or(crate::prisma::Achievement::Other),
             name,

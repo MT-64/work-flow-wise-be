@@ -95,19 +95,26 @@ enum Achievement {
 	Other
 }
 
+enum objective_for{
+	User
+	Department
+	Organize
+}
+
 model Objective {
   pk_objective_id       String                  @id @unique
   period_id             String
   parent_objective_id   String?
   period                Period                  @relation(fields: [period_id], references: [pk_period_id])
   obj_type              objective_type          @default(Other)
+  obj_for               objective_for
   supervisor_id         String
   metric                objective_metric
   achievement           Achievement?
   user                  User                    @relation(fields: [supervisor_id], references: [pk_user_id])
   name                  String
   description           String?
-  target                String
+  target                Float
   progress              Float?                  @default(0)
   status                Boolean                 @default(true)
   created_at            DateTime                @default(now())
