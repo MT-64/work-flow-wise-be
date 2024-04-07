@@ -71,11 +71,11 @@ impl ObjectiveService {
     pub async fn create_obj(
         &self,
         name: String,
-        target: String,
+        target: f64,
         deadline: i64,
         period_id: String,
         supervisor_id: String,
-
+        obj_for: crate::prisma::ObjectiveFor,
         metric: crate::prisma::ObjectiveMetric,
         params: Vec<SetParam>,
     ) -> Result<ObjSelect, ErrorResponse> {
@@ -88,6 +88,7 @@ impl ObjectiveService {
             .create(
                 generate_id(),
                 period::pk_period_id::equals(period_id),
+                obj_for,
                 metric,
                 user::pk_user_id::equals(supervisor_id),
                 name,
