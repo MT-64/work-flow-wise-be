@@ -26,6 +26,7 @@ pub struct CreateObjRequest {
     pub target: String,
     pub progress: Option<f64>,
     pub deadline: i64,
+    pub metric: crate::prisma::ObjectiveMetric,
 }
 
 #[async_trait]
@@ -45,6 +46,7 @@ impl FromRequest<AppState, Body> for CreateObjRequest {
             target,
             progress,
             deadline,
+            metric,
         } = &body;
 
         Ok(body)
@@ -92,6 +94,7 @@ pub struct UpdateObjRequest {
     pub target: Option<String>,
     pub progress: Option<f64>,
     pub deadline: Option<i64>,
+    pub achievement: Option<crate::prisma::Achievement>,
 }
 
 #[async_trait]
@@ -112,8 +115,30 @@ impl FromRequest<AppState, Body> for UpdateObjRequest {
             target,
             progress,
             deadline,
+            achievement,
         } = &body;
 
+        Ok(body)
+    }
+}
+
+#[derive(Deserialize, Debug, ToSchema)]
+#[serde(rename_all = "camelCase")]
+pub struct AddMultipleObjToDepartment {
+    pub list_obj: Vec<String>,
+    pub department_id: String,
+}
+
+#[async_trait]
+impl FromRequest<AppState, Body> for AddMultipleObjToDepartment {
+    type Rejection = ErrorResponse;
+
+    async fn from_request(req: Request<Body>, state: &AppState) -> Result<Self, Self::Rejection> {
+        let Json(body) = Json::<AddMultipleObjToDepartment>::from_request(req, state).await?;
+        let AddMultipleObjToDepartment {
+            list_obj,
+            department_id,
+        } = &body;
         Ok(body)
     }
 }

@@ -25,7 +25,6 @@ use crate::{
 
   request_body(
     content = UpdateObjRequest,
-  content_type = "multipart/form-data",
     description = "Update objective request",
   ),
   responses(
@@ -57,6 +56,7 @@ pub fn update_obj() -> Router<AppState> {
             target,
             progress,
             deadline,
+            achievement,
         }: UpdateObjRequest,
     ) -> WebResult {
         let mut changes = vec![];
@@ -65,10 +65,16 @@ pub fn update_obj() -> Router<AppState> {
             changes.push(objective::name::set(name));
         }
 
-        changes.push(objective::description::set(description));
+        if let Some(description) = description {
+            changes.push(objective::description::set(Some(description)));
+        }
 
         if let Some(target) = target {
             changes.push(objective::target::set(target))
+        }
+
+        if let Some(achievement) = achievement {
+            changes.push(objective::achievement::set(Some(achievement)))
         }
 
         if let Some(period_id) = period_id {

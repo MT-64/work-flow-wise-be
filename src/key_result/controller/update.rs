@@ -149,7 +149,7 @@ pub fn grading_kr() -> Router<AppState> {
             return Err(ErrorResponse::Permissions);
         }
 
-        changes.push(key_result::supervior_grade::set(grade));
+        changes.push(key_result::supervisor_grade::set(grade));
         changes.push(key_result::status::set(true));
 
         let updated_kr: KeyResultResponse =

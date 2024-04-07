@@ -6,6 +6,7 @@ use self::{
     add_to_department::add_to_department,
     add_to_org::add_to_organize,
     add_to_user::add_to_user,
+    check_state::check_state_obj,
     create::create_obj,
     delete::delete_obj,
     get::{
@@ -18,6 +19,7 @@ use self::{
 pub mod add_to_department;
 pub mod add_to_org;
 pub mod add_to_user;
+pub mod check_state;
 pub mod create;
 pub mod delete;
 pub mod get;
@@ -33,6 +35,7 @@ pub fn obj_routes() -> Router<AppState> {
             .merge(update_obj())
             .merge(delete_obj())
             .merge(add_to_department())
+            .merge(check_state_obj())
             .merge(add_to_user())
             .merge(get_objs_by_department())
             .merge(get_objs_by_org())

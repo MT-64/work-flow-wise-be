@@ -75,6 +75,8 @@ impl ObjectiveService {
         deadline: i64,
         period_id: String,
         supervisor_id: String,
+
+        metric: crate::prisma::ObjectiveMetric,
         params: Vec<SetParam>,
     ) -> Result<ObjSelect, ErrorResponse> {
         let deadline_tz = DateTime::from_timestamp(deadline, 0)
@@ -86,6 +88,7 @@ impl ObjectiveService {
             .create(
                 generate_id(),
                 period::pk_period_id::equals(period_id),
+                metric,
                 user::pk_user_id::equals(supervisor_id),
                 name,
                 target,

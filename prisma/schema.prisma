@@ -81,6 +81,20 @@ model Organize {
   ObjectiveOnOrg ObjectiveOnOrg[]
 }
 
+enum objective_metric {
+	Quantity
+	Percent
+	Time 
+	Money
+}
+
+enum Achievement {
+	Achievement
+	NonAchievement
+	Exceed
+	Other
+}
+
 model Objective {
   pk_objective_id       String                  @id @unique
   period_id             String
@@ -88,6 +102,8 @@ model Objective {
   period                Period                  @relation(fields: [period_id], references: [pk_period_id])
   obj_type              objective_type          @default(Other)
   supervisor_id         String
+  metric                objective_metric
+  achievement           Achievement?
   user                  User                    @relation(fields: [supervisor_id], references: [pk_user_id])
   name                  String
   description           String?
@@ -140,6 +156,7 @@ model Notification {
   timestamp          DateTime  @default(now())
 }
 
+
 model KeyResult {
   pk_kr_id String @id @map("pk_kr_id")
 
@@ -156,7 +173,7 @@ model KeyResult {
 
   status Boolean @default(false)
 
-  supervior_grade Float @default(0)
+  supervisor_grade Float @default(0)
 
   metric String
 
