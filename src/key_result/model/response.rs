@@ -34,7 +34,7 @@ pub struct KeyResultResponse {
     pub name: String,
     pub description: String,
     pub metric: String,
-    pub target: String,
+    pub target: f64,
     pub progress: f64,
     pub status: bool,
     pub deadline: i64,

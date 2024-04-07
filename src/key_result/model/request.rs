@@ -21,7 +21,7 @@ pub struct CreateKrRequest {
     pub description: String,
     pub user_id: String,
     pub objective_id: String,
-    pub target: String,
+    pub target: f64,
     pub metric: String,
     pub progress: Option<f64>,
     pub deadline: i64,
@@ -86,7 +86,7 @@ pub struct UpdateKrRequest {
     pub user_id: Option<String>,
     pub objective_id: Option<String>,
     pub description: Option<String>,
-    pub target: Option<String>,
+    pub target: Option<f64>,
     pub progress: Option<f64>,
     pub deadline: Option<i64>,
 }

@@ -68,7 +68,7 @@ impl KeyResultService {
         name: String,
         user_id: String,
         obj_id: String,
-        target: String,
+        target: f64,
         description: String,
         deadline: i64,
         metric: String,
