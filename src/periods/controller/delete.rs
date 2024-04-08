@@ -38,7 +38,7 @@ pub fn delete_period() -> Router<AppState> {
         LoggedInUser(_): LoggedInUser,
         Path(period_id): Path<String>,
     ) -> WebResult {
-        period_service.delete_period(period_id);
+        period_service.delete_period(period_id).await?;
 
         Ok(WebResponse::ok("Deleted period successfully", ()))
     }

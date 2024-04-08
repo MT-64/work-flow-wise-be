@@ -1,6 +1,7 @@
 use axum::{extract::State, routing::post, Router};
 
 use crate::{
+    file::model::select::child_files_select::child_files,
     objectives::model::{request::CreateObjRequest, response::ObjectiveResponse},
     prisma::{
         self,
@@ -112,15 +113,36 @@ pub fn create_obj() -> Router<AppState> {
                 }
             }
             crate::prisma::ObjectiveFor::Department => {
-                for id in child_ids {
+                for user_id in child_ids.iter() {
                     let _ = obj_service
-                        .add_to_department(new_obj.obj_id.clone(), id)
+                        .add_to_user(new_obj.obj_id.clone(), user_id.to_string())
                         .await?;
+                }
+                for user_id in child_ids.iter() {
+                    let user = user_service.get_user_by_id(user_id.to_string()).await?;
+                    match user.department_id {
+                        Some(department_id) => {
+                            let _ = obj_service
+                                .add_to_department(new_obj.obj_id.clone(), department_id)
+                                .await?;
+                        }
+                        None => continue,
+                    }
                 }
             }
             crate::prisma::ObjectiveFor::Organize => {
-                for id in child_ids {
-                    let _ = obj_service.add_to_user(new_obj.obj_id.clone(), id).await?;
+                for department_id in child_ids.iter() {
+                    let _ = obj_service
+                        .add_to_department(new_obj.obj_id.clone(), department_id.to_string())
+                        .await?;
+                }
+                if !child_ids.is_empty() && child_ids.first().is_some() {
+                    let department = department_service
+                        .get_department_by_id(child_ids.first().unwrap().to_string())
+                        .await?;
+                    let _ = obj_service
+                        .add_to_department(new_obj.obj_id.clone(), department.organize_id)
+                        .await?;
                 }
             }
         }
