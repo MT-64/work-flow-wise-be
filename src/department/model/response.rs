@@ -1,4 +1,5 @@
-use crate::prisma::department;
+use crate::prisma::department::{self};
+use crate::prisma::objective_on_department;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 
@@ -10,6 +11,8 @@ department::select!(department_select {
 });
 
 pub type DepartmentSelect = department_select::Data;
+
+objective_on_department::select!(department_id_on_obj { department_id });
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]

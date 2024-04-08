@@ -1,4 +1,4 @@
-use crate::{error::ErrorResponse, helpers::id::generate_id};
+use crate::{error::ErrorResponse, helpers::id::generate_id, prisma::objective_on_department};
 use std::sync::Arc;
 
 use argon2::{
@@ -13,7 +13,7 @@ use crate::prisma::{
     organize, PrismaClient,
 };
 
-use super::model::response::{department_select, DepartmentSelect};
+use super::model::response::{department_id_on_obj, department_select, DepartmentSelect};
 
 #[derive(Clone)]
 pub struct DepartmentService {
@@ -111,5 +111,28 @@ impl DepartmentService {
             .await?;
 
         Ok(deleted_department)
+    }
+    pub async fn get_departments_by_obj(
+        &self,
+        obj_id: String,
+    ) -> Result<Vec<DepartmentSelect>, ErrorResponse> {
+        let department_ids: Vec<String> = self
+            .db
+            .objective_on_department()
+            .find_many(vec![objective_on_department::obj_id::equals(obj_id)])
+            .select(department_id_on_obj::select())
+            .exec()
+            .await?
+            .into_iter()
+            .map(|i| i.department_id)
+            .collect();
+        let mut departments = vec![];
+
+        for id in department_ids {
+            let department = Self::get_department_by_id(self, id).await?;
+            departments.push(department);
+        }
+
+        Ok(departments)
     }
 }

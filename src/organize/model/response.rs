@@ -1,3 +1,4 @@
+use crate::prisma::objective_on_org;
 use crate::prisma::organize;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
@@ -12,6 +13,7 @@ organize::select!(organize_select {
 
 pub type OrganizeSelect = organize_select::Data;
 
+objective_on_org::select!(org_id_on_obj { org_id });
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct OrganizeResponse {

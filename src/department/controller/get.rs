@@ -135,3 +135,46 @@ pub fn get_department() -> Router<AppState> {
     }
     Router::new().route("/:department_id", get(get_department_handler))
 }
+
+#[utoipa::path(
+  get,
+  tag = "Department",
+  path = "/api/v1/department/get_by_obj/{obj_id}",
+  params(
+    ("obj_id" = String, Path, description = "objective ID")
+  ),
+  responses(
+    (
+      status = 201,
+      description = "Get department by obj id",
+      body = ObjectiveResponse,
+      example = json! (
+        {
+          "code": 200,
+          "message": "Get department by obj id successfully",
+          "data": {
+          },
+          "error": ""
+        }
+      )
+    ),
+  )
+)]
+pub fn get_departments_by_obj() -> Router<AppState> {
+    async fn get_departments_by_obj_handler(
+        State(AppState { department_service, .. }): State<AppState>,
+        Path(obj_id): Path<String>,
+    ) -> WebResult {
+        let departments: Vec<DepartmentResponse> = department_service
+            .get_departments_by_obj(obj_id)
+            .await?
+            .into_iter()
+            .map(|u| u.into())
+            .collect();
+        Ok(WebResponse::ok(
+            "Get departments by objective id successfully",
+            departments,
+        ))
+    }
+    Router::new().route("/get_by_obj/:obj_id", get(get_departments_by_obj_handler))
+}
