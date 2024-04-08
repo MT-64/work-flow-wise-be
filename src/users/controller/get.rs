@@ -253,7 +253,7 @@ pub fn get_users_by_obj() -> Router<AppState> {
             users,
         ))
     }
-    Router::new().route("/get_by_obj/:user_id", get(get_users_by_obj_handler))
+    Router::new().route("/get_by_obj/:obj_id", get(get_users_by_obj_handler))
 }
 
 #[utoipa::path(

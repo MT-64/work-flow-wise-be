@@ -40,7 +40,12 @@ use crate::{
 )]
 pub fn create_obj() -> Router<AppState> {
     async fn create_obj_handler(
-        State(AppState { obj_service, .. }): State<AppState>,
+        State(AppState {
+            obj_service,
+            user_service,
+            department_service,
+            ..
+        }): State<AppState>,
         CreateObjRequest {
             obj_type,
             period_id,

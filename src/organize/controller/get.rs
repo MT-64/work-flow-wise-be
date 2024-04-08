@@ -132,3 +132,45 @@ pub fn get_organize() -> Router<AppState> {
     }
     Router::new().route("/:org_id", get(get_organize_handler))
 }
+#[utoipa::path(
+  get,
+  tag = "Organize",
+  path = "/api/v1/organize/get_by_obj/{obj_id}",
+  params(
+    ("obj_id" = String, Path, description = "objective ID")
+  ),
+  responses(
+    (
+      status = 201,
+      description = "Get organize by obj id",
+      body = ObjectiveResponse,
+      example = json! (
+        {
+          "code": 200,
+          "message": "Get organize by obj id successfully",
+          "data": {
+          },
+          "error": ""
+        }
+      )
+    ),
+  )
+)]
+pub fn get_orgs_by_obj() -> Router<AppState> {
+    async fn get_orgs_by_obj_handler(
+        State(AppState { organize_service, .. }): State<AppState>,
+        Path(obj_id): Path<String>,
+    ) -> WebResult {
+        let orgs: Vec<OrganizeResponse> = organize_service
+            .get_orgs_by_obj(obj_id)
+            .await?
+            .into_iter()
+            .map(|u| u.into())
+            .collect();
+        Ok(WebResponse::ok(
+            "Get orgs by objective id successfully",
+            orgs,
+        ))
+    }
+    Router::new().route("/get_by_obj/:obj_id", get(get_orgs_by_obj_handler))
+}

@@ -9,7 +9,7 @@ use axum::Router;
 use self::{
     create::create_organize,
     delete::delete_organize,
-    get::{get_organize, get_organizes},
+    get::{get_organize, get_organizes, get_orgs_by_obj},
     update::update_organize,
 };
 
@@ -21,6 +21,7 @@ pub fn organize_routes() -> Router<AppState> {
             .merge(get_organizes())
             .merge(create_organize())
             .merge(update_organize())
+            .merge(get_orgs_by_obj())
             .merge(delete_organize()),
     )
 }

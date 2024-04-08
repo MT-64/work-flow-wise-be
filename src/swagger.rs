@@ -121,6 +121,7 @@ use crate::notification;
     ////////// department
     department::controller::get::get_department,
     department::controller::get::get_departments,
+    department::controller::get::get_departments_by_obj,
     department::controller::create::create_department,
     department::controller::delete::delete_department,
     department::controller::update::update_department,
@@ -143,6 +144,7 @@ use crate::notification;
     ////////// organize
     organize::controller::get::get_organize,
     organize::controller::get::get_organizes,
+    organize::controller::get::get_orgs_by_obj,
     organize::controller::create::create_organize,
     organize::controller::delete::delete_organize,
     organize::controller::update::update_organize,

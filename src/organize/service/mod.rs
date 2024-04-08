@@ -1,3 +1,4 @@
+use crate::prisma::objective_on_org;
 use crate::{
     error::ErrorResponse,
     helpers::id::generate_id,
@@ -17,7 +18,7 @@ use prisma_client_rust::query_core::schema_builder::constants::filters;
 
 use crate::prisma::{organize, PrismaClient};
 
-use super::model::response::{organize_select, OrganizeResponse, OrganizeSelect};
+use super::model::response::{org_id_on_obj, organize_select, OrganizeResponse, OrganizeSelect};
 
 #[derive(Clone)]
 pub struct OrganizeService {
@@ -116,5 +117,28 @@ impl OrganizeService {
             .await?;
 
         Ok(deleted_org)
+    }
+    pub async fn get_orgs_by_obj(
+        &self,
+        obj_id: String,
+    ) -> Result<Vec<OrganizeSelect>, ErrorResponse> {
+        let org_ids: Vec<String> = self
+            .db
+            .objective_on_org()
+            .find_many(vec![objective_on_org::obj_id::equals(obj_id)])
+            .select(org_id_on_obj::select())
+            .exec()
+            .await?
+            .into_iter()
+            .map(|i| i.org_id)
+            .collect();
+        let mut orgs = vec![];
+
+        for id in org_ids {
+            let org = Self::get_organize_by_id(self, id).await?;
+            orgs.push(org);
+        }
+
+        Ok(orgs)
     }
 }
