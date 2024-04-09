@@ -18,11 +18,10 @@ use crate::{
 #[utoipa::path(
   put,
   tag = "Objective",
-  path = "/api/v1/objective/update/{objective_id}",
+  path = "/api/v1/objective/update/{obj_id}",
   params(
     ("obj_id" = String, Path, description = "Objective ID")
   ),
-
   request_body(
     content = UpdateObjRequest,
     description = "Update objective request",
@@ -88,8 +87,9 @@ pub fn update_obj() -> Router<AppState> {
                     .fixed_offset(),
             ))
         }
-
-        changes.push(objective::progress::set(progress));
+        if let Some(progress) = progress {
+            changes.push(objective::progress::set(Some(progress)));
+        }
 
         let updated_obj: ObjectiveResponse = obj_service.update_obj(obj_id, changes).await?.into();
         Ok(WebResponse::ok(

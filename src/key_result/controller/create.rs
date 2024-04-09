@@ -2,7 +2,7 @@ use axum::{extract::State, routing::post, Router};
 
 use crate::{
     key_result::model::{request::CreateKrRequest, response::KeyResultResponse},
-    prisma::{self, key_result},
+    prisma::{self, key_result, objective},
     response::WebResponse,
     state::AppState,
     WebResult,
@@ -38,7 +38,9 @@ use crate::{
 pub fn create_kr() -> Router<AppState> {
     async fn create_kr_handler(
         State(AppState {
-            keyresult_service, ..
+            obj_service,
+            keyresult_service,
+            ..
         }): State<AppState>,
         CreateKrRequest {
             name,
@@ -56,6 +58,14 @@ pub fn create_kr() -> Router<AppState> {
         if let Some(progress) = progress {
             params.push(key_result::progress::set(progress));
         }
+
+        let obj = obj_service.get_obj_by_id(objective_id.clone()).await?;
+        let _ = obj_service
+            .update_obj(
+                objective_id.clone(),
+                vec![objective::target::set(target.clone() + obj.target)],
+            )
+            .await?;
 
         let new_kr: KeyResultResponse = keyresult_service
             .create_kr(

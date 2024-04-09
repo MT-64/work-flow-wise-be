@@ -87,12 +87,23 @@ pub fn create_obj() -> Router<AppState> {
             _ => unreachable!(),
         };
 
+        match parent_objective_id {
+            Some(ref parent_id) => {
+                let parent_obj = obj_service.get_obj_by_id(parent_id.clone()).await?;
+                let _ = obj_service
+                    .update_obj(
+                        parent_id.clone(),
+                        vec![objective::target::set(parent_obj.target + target.clone())],
+                    )
+                    .await?;
+            }
+            None => {}
+        }
         params.push(objective::parent_objective_id::set(parent_objective_id));
 
         params.push(objective::description::set(description));
         params.push(objective::progress::set(progress));
         params.push(objective::obj_type::set(new_obj_type));
-
         let new_obj: ObjectiveResponse = obj_service
             .create_obj(
                 name,
