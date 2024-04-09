@@ -22,8 +22,8 @@ use crate::{
     ("name" = inline(Option<String>), Query, description = "Kr name"),
     ("status" = inline(Option<bool>), Query, description = "status"),
     ("progress" = inline(Option<f64>), Query, description = "progress"),
-    ("user_id" = inline(Option<String>), Query, description = "User id"),
-    ("objective_id" = inline(Option<String>), Query, description = "Objective id"),
+    ("userId" = inline(Option<String>), Query, description = "User id"),
+    ("objectiveId" = inline(Option<String>), Query, description = "Objective id"),
     ("createdAt" = inline(Option<i64>), Query, description = "Objective created at"),
     ("updatedAt" = inline(Option<i64>), Query, description = "Objective updated at"),
     ("deadline" = inline(Option<i64>), Query, description = "Kr deadline"),
@@ -70,6 +70,10 @@ pub fn get_krs() -> Router<AppState> {
         if let Some(name) = name {
             filters.push(key_result::name::equals(name));
         }
+        if let Some(objective_id) = objective_id {
+            filters.push(key_result::objective_id::equals(objective_id));
+        }
+
 
         if let Some(deadline) = deadline {
             filters.push(key_result::deadline::lt(DateTime::from_timestamp(deadline, 0).unwrap().fixed_offset()))
