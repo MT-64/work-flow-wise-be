@@ -141,7 +141,7 @@ pub fn create_obj() -> Router<AppState> {
                         .get_department_by_id(child_ids.first().unwrap().to_string())
                         .await?;
                     let _ = obj_service
-                        .add_to_department(new_obj.obj_id.clone(), department.organize_id)
+                        .add_to_org(new_obj.obj_id.clone(), department.organize_id)
                         .await?;
                 }
             }
