@@ -11,6 +11,7 @@ period::select!(period_select {
     name
     start_date
     end_date
+    organize_id
 });
 
 pub type PeriodSelect = period_select::Data;
@@ -21,6 +22,7 @@ pub type PeriodSelect = period_select::Data;
 pub struct PeriodResponse {
     pub pk_period_id: String,
     pub name: String,
+    pub organize_id: String,
     pub start_date: i64,
     pub end_date: i64,
 }
@@ -32,14 +34,15 @@ impl From<PeriodSelect> for PeriodResponse {
             name,
             start_date,
             end_date,
+            organize_id,
         }: PeriodSelect,
     ) -> Self {
         Self {
             pk_period_id,
+            organize_id,
             name,
             start_date: start_date.with_timezone(&Utc).timestamp(),
             end_date: end_date.with_timezone(&Utc).timestamp(),
         }
     }
 }
-
