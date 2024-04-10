@@ -70,10 +70,17 @@ pub fn get_krs() -> Router<AppState> {
         if let Some(name) = name {
             filters.push(key_result::name::equals(name));
         }
+
+        if let Some(user_id) = user_id {
+            filters.push(key_result::user_id::equals(user_id));
+        }
+
         if let Some(objective_id) = objective_id {
             filters.push(key_result::objective_id::equals(objective_id));
         }
-
+        if let Some(progress) = progress {
+            filters.push(key_result::progress::gte(progress));
+        }
 
         if let Some(deadline) = deadline {
             filters.push(key_result::deadline::lt(DateTime::from_timestamp(deadline, 0).unwrap().fixed_offset()))

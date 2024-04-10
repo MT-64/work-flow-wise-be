@@ -18,9 +18,10 @@ use crate::{
     ("offset" = inline(Option<i64>), Query, description = "Starting point"),
     ("limit" = inline(Option<i32>), Query, description = "Limit"),
     ("id" = inline(Option<String>), Query, description = "Period id"),
+    ("orgId" = inline(Option<String>), Query, description = "Organize id"),
     ("name" = inline(Option<String>), Query, description = "Period name"),
-    ("start_date" = inline(Option<i64>), Query, description = "Start time "),
-    ("end_date" = inline(Option<i64>), Query, description = "End time "),
+    ("startDate" = inline(Option<i64>), Query, description = "Start time "),
+    ("endDate" = inline(Option<i64>), Query, description = "End time "),
   ),
   responses(
     (
