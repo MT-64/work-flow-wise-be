@@ -28,6 +28,7 @@ pub struct CreateObjRequest {
     pub deadline: i64,
     pub obj_for: String,
     pub metric: String,
+    pub expected: f64,
     pub child_ids: Vec<String>,
 }
 
@@ -39,6 +40,7 @@ impl FromRequest<AppState, Body> for CreateObjRequest {
         let Json(body) = Json::<CreateObjRequest>::from_request(req, state).await?;
 
         let CreateObjRequest {
+            expected,
             parent_objective_id,
             obj_type,
             period_id,
@@ -98,6 +100,7 @@ pub struct UpdateObjRequest {
     pub target: Option<f64>,
     pub progress: Option<f64>,
     pub deadline: Option<i64>,
+    pub expected: Option<f64>,
     pub achievement: Option<crate::prisma::Achievement>,
 }
 
@@ -116,6 +119,7 @@ impl FromRequest<AppState, Body> for UpdateObjRequest {
             name,
             period_id,
             description,
+            expected,
             target,
             progress,
             deadline,

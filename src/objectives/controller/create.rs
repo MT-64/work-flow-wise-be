@@ -59,6 +59,7 @@ pub fn create_obj() -> Router<AppState> {
             parent_objective_id,
             metric,
             obj_for,
+            expected,
             child_ids,
         }: CreateObjRequest,
     ) -> WebResult {
@@ -106,6 +107,7 @@ pub fn create_obj() -> Router<AppState> {
         params.push(objective::obj_type::set(new_obj_type));
         let new_obj: ObjectiveResponse = obj_service
             .create_obj(
+                expected,
                 name,
                 target,
                 deadline,

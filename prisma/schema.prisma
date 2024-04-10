@@ -64,7 +64,7 @@ model Department {
   manager_id       String?
   name             String  @unique
 
-  organize              Organize                @relation(fields: [organize_id], references: [pk_organize_id])
+  organize              Organize                @relation(fields: [organize_id], references: [pk_organize_id], onDelete: SetNull)
   ObjectiveOnDepartment ObjectiveOnDepartment[]
 }
 
@@ -75,7 +75,7 @@ model Organize {
   address        String
   contact        String
 
-  owner          User             @relation(fields: [owner_id], references: [pk_user_id])
+  owner          User             @relation(fields: [owner_id], references: [pk_user_id], onDelete: SetNull)
   Department     Department[]
   Period         Period[]
   ObjectiveOnOrg ObjectiveOnOrg[]
@@ -105,13 +105,14 @@ model Objective {
   pk_objective_id       String                  @id @unique
   period_id             String
   parent_objective_id   String?
-  period                Period                  @relation(fields: [period_id], references: [pk_period_id])
+  period                Period                  @relation(fields: [period_id], references: [pk_period_id], onDelete: SetNull)
   obj_type              objective_type          @default(Other)
   obj_for               objective_for
   supervisor_id         String
+  expected              Float
   metric                objective_metric
   achievement           Achievement?
-  user                  User                    @relation(fields: [supervisor_id], references: [pk_user_id])
+  user                  User                    @relation(fields: [supervisor_id], references: [pk_user_id], onDelete: SetNull)
   name                  String
   description           String?
   target                Float
@@ -168,7 +169,7 @@ model KeyResult {
   pk_kr_id String @id @map("pk_kr_id")
 
   objective_id String
-  objective   Objective @relation(fields: [objective_id], references: [pk_objective_id])
+  objective   Objective @relation(fields: [objective_id], references: [pk_objective_id], onDelete: Cascade)
 
   name String
 
@@ -187,7 +188,7 @@ model KeyResult {
   deadline DateTime
 
   user_id String
-  user   User   @relation(fields: [user_id], references: [pk_user_id])
+  user   User   @relation(fields: [user_id], references: [pk_user_id], onDelete: SetNull)
 
   created_at DateTime @default(now())
 
@@ -202,15 +203,15 @@ model Period {
   end_date     DateTime
 
   Objective Objective[]
-  Organize  Organize    @relation(fields: [organize_id], references: [pk_organize_id])
+  Organize  Organize    @relation(fields: [organize_id], references: [pk_organize_id], onDelete: SetNull)
 }
 
 model ObjectiveOnDepartment {
   id            String     @id @default(uuid())
   obj_id        String
   department_id String
-  objective     Objective  @relation(fields: [obj_id], references: [pk_objective_id])
-  department    Department @relation(fields: [department_id], references: [pk_department_id])
+  objective     Objective  @relation(fields: [obj_id], references: [pk_objective_id], onDelete: SetNull)
+  department    Department @relation(fields: [department_id], references: [pk_department_id], onDelete: SetNull)
 
   @@unique([obj_id, department_id], map: "uc_obj_department")
   @@index([obj_id], map: "obj_departments_obj")
@@ -221,8 +222,8 @@ model ObjectiveOnUser {
   id        String    @id @default(uuid())
   obj_id    String
   user_id   String
-  objective Objective @relation(fields: [obj_id], references: [pk_objective_id])
-  user      User      @relation(fields: [user_id], references: [pk_user_id])
+  objective Objective @relation(fields: [obj_id], references: [pk_objective_id], onDelete: SetNull)
+  user      User      @relation(fields: [user_id], references: [pk_user_id], onDelete: SetNull)
 
   @@unique([obj_id, user_id], map: "uc_obj_user")
   @@index([obj_id], map: "obj_users_obj")
@@ -233,8 +234,8 @@ model ObjectiveOnOrg {
   id        String    @id @default(uuid())
   obj_id    String
   org_id    String
-  objective Objective @relation(fields: [obj_id], references: [pk_objective_id])
-  org       Organize  @relation(fields: [org_id], references: [pk_organize_id])
+  objective Objective @relation(fields: [obj_id], references: [pk_objective_id], onDelete: SetNull)
+  org       Organize  @relation(fields: [org_id], references: [pk_organize_id], onDelete: SetNull)
 
   @@unique([obj_id, org_id], map: "uc_obj_org")
   @@index([obj_id], map: "obj_orgs_obj")

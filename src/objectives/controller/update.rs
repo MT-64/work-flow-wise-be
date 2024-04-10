@@ -56,6 +56,7 @@ pub fn update_obj() -> Router<AppState> {
             progress,
             deadline,
             achievement,
+            expected,
         }: UpdateObjRequest,
     ) -> WebResult {
         let mut changes = vec![];
@@ -74,6 +75,9 @@ pub fn update_obj() -> Router<AppState> {
 
         if let Some(achievement) = achievement {
             changes.push(objective::achievement::set(Some(achievement)))
+        }
+        if let Some(expected) = expected {
+            changes.push(objective::expected::set(expected))
         }
 
         if let Some(period_id) = period_id {
