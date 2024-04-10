@@ -12,9 +12,9 @@ use crate::{
 #[utoipa::path(
   delete,
   tag = "Objective",
-  path = "/api/v1/objective/delete/{objective_id}",
+  path = "/api/v1/objective/delete/{obj_id}",
   params(
-    ("objId" = String, Path, description = "Objective ID")
+    ("obj_id" = String, Path, description = "Objective ID")
   ),
   responses(
     (
