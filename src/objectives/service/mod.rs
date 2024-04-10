@@ -70,6 +70,7 @@ impl ObjectiveService {
 
     pub async fn create_obj(
         &self,
+        expected: f64,
         name: String,
         target: f64,
         deadline: i64,
@@ -89,6 +90,7 @@ impl ObjectiveService {
                 generate_id(),
                 period::pk_period_id::equals(period_id),
                 obj_for,
+                expected,
                 metric,
                 user::pk_user_id::equals(supervisor_id),
                 name,
