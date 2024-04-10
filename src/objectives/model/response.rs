@@ -24,6 +24,7 @@ objective::select!(objective_select {
     achievement
     metric
     obj_for
+    expected
 });
 
 objective_on_department::select!(obj_id_on_department_select { obj_id });
@@ -79,6 +80,7 @@ pub struct ObjectiveResponse {
     pub progress: Option<f64>,
     pub status: bool,
     pub deadline: i64,
+    pub expected: f64,
     pub created_at: i64,
     pub updated_at: i64,
     pub parent_objective_id: String,
@@ -101,6 +103,7 @@ impl From<ObjSelect> for ObjectiveResponse {
             status,
             deadline,
             created_at,
+            expected,
             updated_at,
             parent_objective_id,
             achievement,
@@ -115,6 +118,7 @@ impl From<ObjSelect> for ObjectiveResponse {
             obj_type,
             obj_for,
             metric,
+            expected,
             achievement: achievement.unwrap_or(crate::prisma::Achievement::Other),
             name,
             description,
