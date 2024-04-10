@@ -14,7 +14,7 @@ use crate::{
   tag = "Objective",
   path = "/api/v1/objective/delete/{objective_id}",
   params(
-    ("obj_id" = String, Path, description = "Objective ID")
+    ("objId" = String, Path, description = "Objective ID")
   ),
   responses(
     (
