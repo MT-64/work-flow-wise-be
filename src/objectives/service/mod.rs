@@ -1,6 +1,7 @@
 use crate::key_result::model::response::{keyresult_select, KrSelect};
 use crate::prisma::file::created_at::equals;
 use crate::prisma::objective::parent_objective_id;
+use crate::prisma::objective::UncheckedSetParam;
 use crate::prisma::{department, key_result, organize, period, user};
 use crate::prisma::{objective_on_department, objective_on_org, objective_on_user};
 use crate::{error::ErrorResponse, helpers::id::generate_id, prisma::objective::deadline};
@@ -78,21 +79,35 @@ impl ObjectiveService {
         supervisor_id: String,
         obj_for: crate::prisma::ObjectiveFor,
         metric: crate::prisma::ObjectiveMetric,
-        params: Vec<SetParam>,
+        params: Vec<UncheckedSetParam>,
     ) -> Result<ObjSelect, ErrorResponse> {
         let deadline_tz = DateTime::from_timestamp(deadline, 0)
             .unwrap()
             .fixed_offset();
+        // self.db
+        //     .objective()
+        //     .create_unchecked(
+        //         generate_id(),
+        //         period::pk_period_id::equals(period_id),
+        //         obj_for,
+        //         expected,
+        //         metric,
+        //         user::pk_user_id::equals(supervisor_id),
+        //         name,
+        //         target,
+        //         deadline_tz,
+        //         params,
+        //     )
 
         self.db
             .objective()
-            .create(
+            .create_unchecked(
                 generate_id(),
-                period::pk_period_id::equals(period_id),
+                period_id,
                 obj_for,
+                supervisor_id,
                 expected,
                 metric,
-                user::pk_user_id::equals(supervisor_id),
                 name,
                 target,
                 deadline_tz,
