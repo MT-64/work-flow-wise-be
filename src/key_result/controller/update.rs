@@ -170,7 +170,7 @@ pub fn grading_kr() -> Router<AppState> {
         let mut progress_obj = 0.0;
         let mut weight = 0.0;
         for kr in &krs {
-            progress_obj += kr.supervisor_grade * kr.target;
+            progress_obj += kr.progress * kr.target;
             weight += kr.target;
         }
 
