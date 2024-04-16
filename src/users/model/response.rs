@@ -1,3 +1,4 @@
+use crate::helpers::aws_path::get_aws_path;
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
@@ -65,7 +66,7 @@ pub struct UserResponse {
     pub role: String,
     pub gender: String,
     pub introduction_brief: Option<String>,
-    pub image: Option<String>,
+    pub image: String,
     pub total_credit: i32,
     pub created_at: i64,
     pub updated_at: i64,
@@ -91,6 +92,7 @@ impl From<UserSelect> for UserResponse {
             updated_at,
         }: UserSelect,
     ) -> Self {
+        let image = get_aws_path(&image.unwrap_or_default());
         Self {
             id: pk_user_id,
             first_name,

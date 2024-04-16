@@ -2,7 +2,8 @@ use axum::{extract::State, routing::post, Router};
 use axum_typed_multipart::{FieldData, FieldMetadata};
 
 use crate::{
-    file::model::create::CreateFileRequest,
+    file::model::create::{CreateFileRequest, UploadRequest},
+    helpers::id::generate_id,
     prisma::{folder, Visibility},
     response::WebResponse,
     users::model::{loggedin::LoggedInUser, response::UserSelect},
@@ -79,4 +80,47 @@ pub fn create_file() -> Router<AppState> {
         Ok(WebResponse::created("Created a new file", new_file))
     }
     Router::new().route("/create", post(create_file_handler))
+}
+
+#[utoipa::path(
+  post,
+  tag = "File_processing",
+  path = "/api/v1/file/upload",
+  request_body(
+    content = UploadRequest,
+    content_type = "multipart/form-data",
+    description = "Upload file Request",
+  ),
+  responses(
+    (
+      status = 201,
+      description = "Upload file success",
+      body = String,
+    ),
+  )
+)]
+pub fn upload_file() -> Router<AppState> {
+    async fn create_file_handler(
+        State(AppState { storage, .. }): State<AppState>,
+        // LoggedInUser(UserSelect {
+        //     pk_user_id: user_id,
+        //     ..
+        // }): LoggedInUser,
+        UploadRequest {
+            file:
+                FieldData {
+                    metadata: FieldMetadata { file_name, .. },
+                    contents,
+                },
+        }: UploadRequest,
+    ) -> WebResult {
+        let file_name: String = file_name.expect("Invalid file");
+
+        let (_, extension) = file_name.split_once('.').expect("Cannot get extension");
+        let new_fullpath = format!("{}.{}", generate_id(), extension.to_string());
+        storage.create_file(&new_fullpath, contents).await?;
+
+        Ok(WebResponse::created("Created a new file", new_fullpath))
+    }
+    Router::new().route("/upload", post(create_file_handler))
 }

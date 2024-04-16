@@ -19,9 +19,9 @@ enum Gender {
 
 enum Role {
   Employee
-  Admin
-  Owner
   Manager
+  Owner
+  Admin
 }
 
 model User {

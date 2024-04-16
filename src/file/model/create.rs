@@ -24,3 +24,19 @@ impl FromRequest<AppState, Body> for CreateFileRequest {
         Ok(body)
     }
 }
+
+#[derive(TryFromMultipart, Validate)]
+pub struct UploadRequest {
+    pub file: FieldData<Bytes>,
+}
+
+#[async_trait]
+impl FromRequest<AppState, Body> for UploadRequest {
+    type Rejection = ErrorResponse;
+    async fn from_request(req: Request<Body>, state: &AppState) -> Result<Self, Self::Rejection> {
+        let TypedMultipart(body) =
+            TypedMultipart::<UploadRequest>::from_request(req, state).await?;
+        body.validate()?;
+        Ok(body)
+    }
+}

@@ -6,6 +6,7 @@ use axum_extra::TypedHeader;
 use crate::{error::ErrorResponse, state::AppState, users::auth::decode_access_token};
 
 use super::response::{UserSelect, UserSelectWithPassword};
+use crate::prisma::Role;
 
 pub struct LoggedInUser(pub UserSelect);
 
@@ -27,5 +28,24 @@ impl FromRequestParts<AppState> for LoggedInUser {
         let user = state.user_service.get_user_by_id(id).await?;
 
         Ok(LoggedInUser(user.clone()))
+    }
+}
+pub struct LoggedInAdmin(pub UserSelect);
+
+#[async_trait]
+impl FromRequestParts<AppState> for LoggedInAdmin {
+    type Rejection = ErrorResponse;
+
+    async fn from_request_parts(
+        parts: &mut Parts,
+        state: &AppState,
+    ) -> Result<Self, Self::Rejection> {
+        let LoggedInUser(user) = LoggedInUser::from_request_parts(parts, state).await?;
+
+        if user.role != Role::Admin {
+            return Err(ErrorResponse::Permissions);
+        }
+
+        Ok(LoggedInAdmin(user))
     }
 }
