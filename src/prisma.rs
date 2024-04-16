@@ -28225,20 +28225,20 @@ impl ToString for Gender {
 pub enum Role {
     #[serde(rename = "Employee")]
     Employee,
-    #[serde(rename = "Admin")]
-    Admin,
-    #[serde(rename = "Owner")]
-    Owner,
     #[serde(rename = "Manager")]
     Manager,
+    #[serde(rename = "Owner")]
+    Owner,
+    #[serde(rename = "Admin")]
+    Admin,
 }
 impl ToString for Role {
     fn to_string(&self) -> String {
         match self {
             Self::Employee => "Employee".to_string(),
-            Self::Admin => "Admin".to_string(),
-            Self::Owner => "Owner".to_string(),
             Self::Manager => "Manager".to_string(),
+            Self::Owner => "Owner".to_string(),
+            Self::Admin => "Admin".to_string(),
         }
     }
 }

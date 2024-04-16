@@ -6,6 +6,8 @@ use axum::{
     http::Request,
     Json,
 };
+use axum_typed_multipart::FieldData;
+use bytes::Bytes;
 use is_empty::IsEmpty;
 use serde::Deserialize;
 use validator::Validate;
@@ -91,9 +93,7 @@ pub struct UpdateUserRequest {
 
     pub role: Option<crate::prisma::Role>,
 
-    #[validate(custom = "check_password")]
-    #[is_empty(if = "String::is_empty")]
-    pub password: String,
+    pub password: Option<String>,
 
     #[validate(custom = "check_password")]
     pub new_password: Option<String>,
@@ -135,19 +135,19 @@ impl FromRequest<AppState, Body> for UpdateUserRequest {
         } = &body;
 
         // Ensure that both new password and confirm new password fields are equal
-        if (new_password.is_some() && confirm_new_password.is_none())
-            || (new_password.is_none() && confirm_new_password.is_some())
-        {
-            return Err(validation_message("Both field newPassword and confirmNewPassword must exists together, or omit them both").into());
-        }
-        if let (Some(new_password), Some(confirm_new_password)) =
-            (new_password, confirm_new_password)
-        {
-            if new_password != confirm_new_password {
-                return Err(validation_message("Both passwords are not the same").into());
-            }
-        }
-
+        // if (new_password.is_some() && confirm_new_password.is_none())
+        //     || (new_password.is_none() && confirm_new_password.is_some())
+        // {
+        //     return Err(validation_message("Both field newPassword and confirmNewPassword must exists together, or omit them both").into());
+        // }
+        // if let (Some(new_password), Some(confirm_new_password)) =
+        //     (new_password, confirm_new_password)
+        // {
+        //     if new_password != confirm_new_password {
+        //         return Err(validation_message("Both passwords are not the same").into());
+        //     }
+        // }
+        //
         Ok(body)
     }
 }

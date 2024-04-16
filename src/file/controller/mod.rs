@@ -13,7 +13,7 @@ use crate::AppState;
 use self::{
     collab::set_file_collaborators,
     content::{generate_file_temp_key, get_file_content},
-    create::create_file,
+    create::{create_file, upload_file},
     delete::{delete_file, delete_file_version},
     get::{my::get_my_files, public::get_public_files, shared::get_shared_files},
     restore::restore_file,
@@ -42,6 +42,7 @@ pub fn file_routes() -> Router<AppState> {
             .merge(restore_file())
             // PUT /file/collaborators
             .merge(set_file_collaborators())
+            .merge(upload_file())
             // GET /file/content/:file_id
             .merge(get_file_content())
             // POST /file/content/:file_id

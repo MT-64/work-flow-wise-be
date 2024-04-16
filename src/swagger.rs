@@ -93,6 +93,7 @@ use crate::notification;
  //   users::login::login,
     users::controller::profile::profile,
     users::controller::create::create_user,
+    users::controller::create::admin_create_user,
     users::controller::update::update_user,
     users::controller::delete::delete_user,
     users::controller::login::login,
