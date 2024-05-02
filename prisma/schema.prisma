@@ -189,6 +189,8 @@ model KeyResult {
 
   metric String
 
+  fileShared String[]
+
   deadline DateTime
 
   user_id String

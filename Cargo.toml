@@ -44,6 +44,17 @@ axum-auth = "0.7.0"
 tracing = "0.1"
 tracing-subscriber = "0.3"
 anyhow = "1.0.80"
+
+sqlx = { version = "*", features = [
+  "runtime-tokio-rustls",
+  "uuid",
+  "json",
+  "postgres",
+  "migrate",
+  "chrono",
+  "time",
+] }
+async-recursion = "1.1.1"
 [profile.dev]
 opt-level = 0
 

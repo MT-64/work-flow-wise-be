@@ -45,6 +45,7 @@ pub fn create_obj() -> Router<AppState> {
             obj_service,
             user_service,
             department_service,
+            notification_service,
             ..
         }): State<AppState>,
         CreateObjRequest {
@@ -129,6 +130,11 @@ pub fn create_obj() -> Router<AppState> {
                 for user_id in child_ids.iter() {
                     let _ = obj_service
                         .add_to_user(new_obj.obj_id.clone(), user_id.to_string())
+                        .await?;
+
+                    let message = format!(r#"New objective {} is assigned to you"#, new_obj.name);
+                    notification_service
+                        .create_noti(user_id.to_string(), message.clone(), vec![])
                         .await?;
                 }
                 for user_id in child_ids.iter() {

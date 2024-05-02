@@ -152,6 +152,7 @@ use crate::notification;
 
     //////// file 
     file::controller::get::my::get_my_files,
+    file::controller::create::upload_file,
     /////// notification
     notification::controller::get::get_noties,
     notification::controller::update::update_noti,
