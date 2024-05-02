@@ -41,7 +41,6 @@ use tracing::{info_span, instrument, Instrument};
                     "isDeleted": false,
                     "parentId": "mwJb-rUCQGSy9p4MCiLD",
                     "postId": "7gQM24_VOoub43rdh_qi",
-                    "score": 0,
                     "updatedAt": 0,
                     "userId": "_QGuhsRFu7aRAJOmYnHD"
                   },
@@ -58,7 +57,6 @@ use tracing::{info_span, instrument, Instrument};
                     "isDeleted": false,
                     "parentId": "mwJb-rUCQGSy9p4MCiLD",
                     "postId": "7gQM24_VOoub43rdh_qi",
-                    "score": 0,
                     "updatedAt": 0,
                     "userId": "_QGuhsRFu7aRAJOmYnHD"
                   },
@@ -74,7 +72,6 @@ use tracing::{info_span, instrument, Instrument};
                 "isDeleted": false,
                 "parentId": null,
                 "postId": "7gQM24_VOoub43rdh_qi",
-                "score": 0,
                 "updatedAt": 0,
                 "userId": "_QGuhsRFu7aRAJOmYnHD"
               },

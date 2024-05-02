@@ -15,9 +15,9 @@ pub struct CommentTreeNode {
 #[derive(Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct CommentTreeNodeResponse {
-    pub parent_comment: CommentResponse,
+    pub comment: CommentResponse,
     pub user_id: String,
-    pub parent_id: String,
+    pub parent_id: Option<String>,
     pub childers: Vec<CommentTreeNodeResponse>,
 }
 
@@ -31,9 +31,12 @@ impl From<CommentTreeNode> for CommentTreeNodeResponse {
         }: CommentTreeNode,
     ) -> Self {
         Self {
-            parent_comment: comment.into(),
+            comment: comment.into(),
             user_id,
-            parent_id: parent_comment_id,
+            parent_id: match parent_comment_id.trim() {
+                "" => None,
+                _ => Some(parent_comment_id),
+            },
             childers: children.into_iter().map(|child| child.into()).collect(),
         }
     }
@@ -48,7 +51,7 @@ pub struct DbComment {
     pub user_id: String,
     pub content: String,
     pub created_at: i64,
-    pub deleted_at: i64,
+    pub deleted_at: Option<i64>,
     pub updated_at: i64,
     pub is_deleted: bool,
 }
@@ -89,7 +92,7 @@ pub struct CommentResponse {
     pub user_id: String,
     pub content: String,
     pub created_at: i64,
-    pub deleted_at: i64,
+    pub deleted_at: Option<i64>,
     pub updated_at: i64,
     pub is_deleted: bool,
 }

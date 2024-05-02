@@ -36,7 +36,7 @@ impl CommentService {
                 FROM tbl_comments
                 WHERE
                     post_id = $1 AND parent_comment_id IS NULL
-                ORDER BY score DESC, created_at DESC
+                ORDER BY created_at DESC
             ;"#;
         let comments: Vec<DbComment> = sqlx::query_as::<_, DbComment>(query)
             .bind(post_id)
@@ -116,7 +116,7 @@ impl CommentService {
             r#" SELECT *
                 FROM tbl_comments
                 WHERE
-                parent_comment_id = $1 ORDER BY score DESC, created_at DESC; "#,
+                parent_comment_id = $1 ORDER BY created_at DESC; "#,
         )
         .bind(&comment.id)
         .fetch_all(&self.db)

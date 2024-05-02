@@ -7,6 +7,7 @@ use crate::users::model::request::{
     CreateUserRequest, DeleteUserRequest, LoginRequest, UpdateUserRequest, UserQueryRequest, AddMultipleUserToDepartment, AddMultipleUserToOrg,
 };
 
+use crate::comment::{controller::create::AddCommentToCommentRequest ,model::{CommentResponse, CommentTreeNodeResponse}};
 use crate::department::model::request::{CreateDepartmentRequest, UpdateDepartmentRequest};
 use crate::key_result::model::request::{CreateKrRequest, UpdateKrRequest, GradingKr};
 use crate::objectives::model::request::{CreateObjRequest, UpdateObjRequest};
@@ -32,6 +33,7 @@ use crate::users;
 use crate::file;
 use crate::folder;
 use crate::notification;
+use crate::comment;
 
 #[derive(OpenApi)]
 #[openapi(
@@ -81,7 +83,11 @@ use crate::notification;
       PeriodResponse,
       ProgressResponse,
       OrganizeResponse,
-      NotificationResponse
+      NotificationResponse,
+      //// Comment
+      AddCommentToCommentRequest,
+      CommentResponse,
+      CommentTreeNodeResponse
 
     )
   ),
@@ -90,7 +96,7 @@ use crate::notification;
     users::controller::get::get_users,
     users::controller::get::get_user,
     users::controller::get::get_users_by_obj,
- //   users::login::login,
+//   users::login::login,
     users::controller::profile::profile,
     users::controller::create::create_user,
     users::controller::create::admin_create_user,
@@ -156,6 +162,11 @@ use crate::notification;
     /////// notification
     notification::controller::get::get_noties,
     notification::controller::update::update_noti,
+
+    ///// comment 
+    comment::controller::create::add_to_comment,
+    comment::controller::get::get_comments_by_post,
+    comment::controller::get::get_comment_by_id
 
 
 

@@ -94,5 +94,5 @@ pub fn add_to_comment() -> Router<AppState> {
             created_comment,
         ))
     }
-    Router::new().route("/add_to_comment", post(add_to_comment_handler))
+    Router::new().route("/create_comment", post(add_to_comment_handler))
 }
