@@ -21,6 +21,7 @@ use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
 mod aws;
+mod comment;
 mod department;
 mod env;
 mod error;
@@ -77,7 +78,7 @@ async fn main() {
 
         let addr = SocketAddr::from(([0, 0, 0, 0], port));
 
-        println!("Server started at https://{hostname}:{port}");
+        println!("Server started at https://{hostname}:{port}/docs");
 
         axum_server::bind_rustls(addr, tls_config)
             .serve(routes.into_make_service())

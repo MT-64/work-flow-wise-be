@@ -123,6 +123,9 @@ pub enum ErrorResponse {
 
     #[error("Build ObjectIdentifier error")]
     BuildObjectIdentifier(#[from] BuildError),
+
+    #[error("Sqlx query error")]
+    Sqlx(#[from] sqlx::Error),
 }
 
 impl IntoResponse for ErrorResponse {
@@ -214,6 +217,7 @@ impl IntoResponse for ErrorResponse {
                 "Forbidden",
                 "You do not have permissions to perform this action",
             ),
+            ErrorResponse::Sqlx(e) => WebResponse::internal_error("sqlx error", e),
             ErrorResponse::Download(e) => WebResponse::internal_error("The download process failed", e),
             ErrorResponse::Zip(e) => WebResponse::internal_error("The zip process failed", e)
 
