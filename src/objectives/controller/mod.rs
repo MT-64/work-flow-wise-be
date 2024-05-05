@@ -3,9 +3,9 @@ use axum::Router;
 use crate::state::AppState;
 
 use self::{
-    add_to_department::add_to_department,
-    add_to_org::add_to_organize,
-    add_to_user::add_to_user,
+    add_to_department::{add_to_department, remove_from_department},
+    add_to_org::{add_to_organize, remove_from_org},
+    add_to_user::{add_to_user, remove_from_user},
     check_state::check_state_obj,
     create::create_obj,
     delete::delete_obj,
@@ -42,6 +42,9 @@ pub fn obj_routes() -> Router<AppState> {
             .merge(get_objs_by_parent())
             .merge(get_objs_by_user())
             .merge(get_obj_progress())
+            .merge(remove_from_org())
+            .merge(remove_from_department())
+            .merge(remove_from_user())
             .merge(add_to_organize()),
     )
 }

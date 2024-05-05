@@ -9,7 +9,7 @@ use crate::users::model::request::{
 
 use crate::comment::{controller::create::AddCommentToCommentRequest ,model::{CommentResponse, CommentTreeNodeResponse}};
 use crate::department::model::request::{CreateDepartmentRequest, UpdateDepartmentRequest};
-use crate::key_result::model::request::{CreateKrRequest, UpdateKrRequest, GradingKr};
+use crate::key_result::model::request::{CreateKrRequest, UpdateKrRequest, GradingKr, AddFileRequest};
 use crate::objectives::model::request::{CreateObjRequest, UpdateObjRequest};
 use crate::organize::model::request::{CreateOrganizeRequest, UpdateOrganizeRequest};
 use crate::periods::model::request::{CreatePeriodRequest, UpdatePeriodRequest};
@@ -63,6 +63,7 @@ use crate::comment;
       UpdateDepartmentRequest,
       //Keyresult
       CreateKrRequest,
+      AddFileRequest,
       UpdateKrRequest,
       GradingKr,
       // Period
@@ -104,6 +105,7 @@ use crate::comment;
     users::controller::delete::delete_user,
     users::controller::login::login,
     users::controller::add_to_department::add_to_department,
+    users::controller::add_to_department::remove_user_department,
     users::controller::add_to_department::add_multiple_to_department,
     users::controller::add_to_org::add_to_organize,
     users::controller::add_to_org::add_multiple_to_org,
@@ -119,8 +121,11 @@ use crate::comment;
     objectives::controller::delete::delete_obj,
     objectives::controller::update::update_obj,
     objectives::controller::add_to_department::add_to_department,
+    objectives::controller::add_to_department::remove_from_department,
     objectives::controller::add_to_user::add_to_user,
+    objectives::controller::add_to_user::remove_from_user,
     objectives::controller::add_to_org::add_to_organize,
+    objectives::controller::add_to_org::remove_from_org,
     objectives::controller::get::get_objs_by_parent,
     objectives::controller::get::get_obj_progress,
     objectives::controller::check_state::check_state_obj,
@@ -140,6 +145,7 @@ use crate::comment;
     key_result::controller::delete::delete_kr,
     key_result::controller::update::update_kr,
     key_result::controller::update::grading_kr,
+    key_result::controller::add_file::add_file,
 
     ////////// period
     periods::controller::get::get_periods,

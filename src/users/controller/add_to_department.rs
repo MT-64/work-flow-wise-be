@@ -141,3 +141,57 @@ pub fn add_multiple_to_department() -> Router<AppState> {
         put(add_multiple_to_department_handler),
     )
 }
+
+#[utoipa::path(
+  put,
+  tag = "User",
+  path = "/api/v1/user/remove_user_department/{user_id}",
+  params(
+    ("user_id" = String, Path, description = "User ID")
+  ),
+  responses(
+    (
+      status = 200,
+      description = "Add users department successfully",
+      body = UserResponse,
+      example = json!(
+        {
+          "code": 200,
+          "message": "Add user to department successfully",
+          "data": {
+            "createdAt": 1696932804946_i64,
+            "email": "giang@local.com",
+            "firstName": "Azuros",
+            "id": "E--_R7geRkFe33WKac5f",
+            "image": null,
+            "introductionBrief": "Conservative Tech Officer (CTO) @ VSystems Inc.",
+            "lastName": "Cloudapi",
+            "level": "Beginner",
+            "username": "Tester",
+            "role": "Subscriber",
+            "totalCredit": 0,
+            "official": false,
+            "updatedAt": 1696933005817_i64
+          },
+          "error": ""
+        }
+      )
+    )
+  )
+)]
+pub fn remove_user_department() -> Router<AppState> {
+    async fn remove_user_department_handler(
+        State(AppState { user_service, .. }): State<AppState>,
+        Path(user_id): Path<String>,
+    ) -> WebResult {
+        let updated_user: UserResponse = user_service.remove_user_department(user_id).await?.into();
+        Ok(WebResponse::ok(
+            "Remove user department successfully",
+            updated_user,
+        ))
+    }
+    Router::new().route(
+        "/remove_user_department/:user_id",
+        put(remove_user_department_handler),
+    )
+}

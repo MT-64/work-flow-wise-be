@@ -1,10 +1,11 @@
 use axum::{extract::State, routing::post, Router};
 
 use crate::{
+    prisma::user,
     response::WebResponse,
     state::AppState,
-    users::model::loggedin::LoggedInAdmin,
     users::model::{
+        loggedin::LoggedInAdmin,
         request::CreateUserRequest,
         response::{UserResponse, UserSelect},
     },
@@ -60,11 +61,20 @@ pub fn create_user() -> Router<AppState> {
             username,
             email,
             password,
+            first_name,
+            last_name,
+            gender,
             ..
         }: CreateUserRequest,
     ) -> WebResult {
+        let mut params = vec![];
+
+        params.push(user::first_name::set(first_name));
+        params.push(user::last_name::set(last_name));
+        params.push(user::gender::set(gender));
+
         let new_user: UserResponse = user_service
-            .create_user(username, email.unwrap_or_default(), password)
+            .create_user(username, email.unwrap_or_default(), password, params)
             .await?
             .into();
 
@@ -134,7 +144,7 @@ pub fn admin_create_user() -> Router<AppState> {
         }: CreateUserRequest,
     ) -> WebResult {
         let new_user: UserResponse = user_service
-            .create_user(username, email.unwrap_or_default(), password)
+            .create_user(username, email.unwrap_or_default(), password, vec![])
             .await?
             .into();
 
