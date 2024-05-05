@@ -36,7 +36,7 @@ model User {
   pagination_id      Int      @unique @default(autoincrement()) @map("pagination_id")
   first_name         String?
   last_name          String?
-  gender             Gender   @default(Male)
+  gender             Gender?   @default(Male)
   role               Role     @default(Employee)
   introduction_brief String?
   image              String?

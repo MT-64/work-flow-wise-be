@@ -63,6 +63,10 @@ pub struct CreateUserRequest {
 
     #[validate(custom = "check_password")]
     pub confirm_password: String,
+
+    pub first_name: Option<String>,
+    pub last_name: Option<String>,
+    pub gender: Option<crate::prisma::Gender>,
 }
 
 #[async_trait]

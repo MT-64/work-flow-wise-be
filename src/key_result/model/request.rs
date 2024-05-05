@@ -115,7 +115,25 @@ impl FromRequest<AppState, Body> for UpdateKrRequest {
         Ok(body)
     }
 }
+#[derive(Deserialize, Validate, ToSchema)]
+#[serde(rename_all = "camelCase")]
+pub struct AddFileRequest {
+    pub file_path: String,
+}
 
+#[async_trait]
+impl FromRequest<AppState, Body> for AddFileRequest {
+    type Rejection = ErrorResponse;
+    async fn from_request(req: Request<Body>, state: &AppState) -> Result<Self, Self::Rejection> {
+        let Json(body) = Json::<AddFileRequest>::from_request(req, state).await?;
+
+        // Just return no content if the body is empty
+
+        let AddFileRequest { file_path } = &body;
+
+        Ok(body)
+    }
+}
 #[derive(Debug, Deserialize, Validate, ToSchema)]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "camelCase")]

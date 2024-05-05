@@ -1,8 +1,7 @@
 use crate::{
     error::ErrorResponse,
     helpers::id::generate_id,
-    prisma::objective_on_department::department_id,
-    prisma::objective_on_user,
+    prisma::{self, objective_on_department::department_id, objective_on_user},
     users::model::response::{
         user_select, user_select_with_password, UserSelect, UserSelectWithPassword,
     },
@@ -13,6 +12,7 @@ use argon2::{
     password_hash::{rand_core::OsRng, SaltString},
     Argon2, PasswordHash, PasswordHasher, PasswordVerifier,
 };
+use prisma_client_rust::PrismaValue;
 
 use crate::prisma::{
     user::{self, SetParam, WhereParam},
@@ -127,13 +127,14 @@ impl UserService {
         username: String,
         email: String,
         password: String,
+        params: Vec<SetParam>,
     ) -> Result<UserSelect, ErrorResponse> {
         let password = Argon2::default()
             .hash_password(password.as_bytes(), &self.salt)?
             .to_string();
         self.db
             .user()
-            .create(generate_id(), username, email, password, vec![])
+            .create(generate_id(), username, email, password, params)
             .select(user_select::select())
             .exec()
             .await
@@ -171,6 +172,16 @@ impl UserService {
         department_id: String,
     ) -> Result<UserSelect, ErrorResponse> {
         let changes: Vec<SetParam> = vec![user::department_id::set(Some(department_id))];
+
+        self.update_user(user_id, changes).await
+    }
+    pub async fn remove_user_department(
+        &self,
+        user_id: String,
+    ) -> Result<UserSelect, ErrorResponse> {
+        let changes: Vec<SetParam> = vec![user::department_id::set(Some(
+            PrismaValue::Null.to_string(),
+        ))];
 
         self.update_user(user_id, changes).await
     }

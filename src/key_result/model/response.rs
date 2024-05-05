@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 use validator::Validate;
 
-use crate::prisma::key_result;
+use crate::{helpers::aws_path::get_aws_path, prisma::key_result};
 
 key_result::select!(keyresult_select {
     pk_kr_id
@@ -20,6 +20,7 @@ key_result::select!(keyresult_select {
     created_at
     updated_at
     supervisor_grade
+    file_shared
 });
 
 pub type KrSelect = keyresult_select::Data;
@@ -41,6 +42,7 @@ pub struct KeyResultResponse {
     pub created_at: i64,
     pub updated_at: i64,
     pub supervisor_grade: f64,
+    pub file_shared: Vec<String>,
 }
 
 impl From<KrSelect> for KeyResultResponse {
@@ -59,8 +61,10 @@ impl From<KrSelect> for KeyResultResponse {
             deadline,
             created_at,
             updated_at,
+            file_shared,
         }: KrSelect,
     ) -> Self {
+        let file_shared = file_shared.into_iter().map(|f| get_aws_path(&f)).collect();
         Self {
             keyresult_id: pk_kr_id,
             supervisor_grade,
@@ -75,6 +79,7 @@ impl From<KrSelect> for KeyResultResponse {
             deadline: deadline.with_timezone(&Utc).timestamp(),
             created_at: created_at.with_timezone(&Utc).timestamp(),
             updated_at: updated_at.with_timezone(&Utc).timestamp(),
+            file_shared,
         }
     }
 }

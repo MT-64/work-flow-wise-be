@@ -3,7 +3,7 @@ use axum::Router;
 use crate::state::AppState;
 
 use self::{
-    add_to_department::{add_multiple_to_department, add_to_department},
+    add_to_department::{add_multiple_to_department, add_to_department, remove_user_department},
     add_to_org::{add_multiple_to_org, add_to_organize},
     create::{admin_create_user, create_user},
     delete::delete_user,
@@ -38,6 +38,7 @@ pub fn user_routes() -> Router<AppState> {
             .merge(add_to_department())
             .merge(add_multiple_to_department())
             .merge(add_multiple_to_org())
+            .merge(remove_user_department())
             .merge(admin_create_user())
             .merge(add_to_organize()),
     )

@@ -91,7 +91,7 @@ pub fn update_user() -> Router<AppState> {
             changes.push(user::last_name::set(Some(last_name)))
         }
         if let Some(gender) = gender {
-            changes.push(user::gender::set(gender))
+            changes.push(user::gender::set(Some(gender)))
         }
         if let Some(introduction_brief) = introduction_brief {
             changes.push(user::introduction_brief::set(Some(introduction_brief)))

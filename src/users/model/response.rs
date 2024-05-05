@@ -102,7 +102,7 @@ impl From<UserSelect> for UserResponse {
             department_id: department_id.unwrap_or_default(),
             email,
             role: role.to_string(),
-            gender: gender.to_string(),
+            gender: gender.unwrap_or(crate::prisma::Gender::Male).to_string(),
             introduction_brief,
             image,
             total_credit,

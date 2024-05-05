@@ -6,6 +6,7 @@ use crate::{
     prisma::{
         self,
         objective::{self, obj_for},
+        user,
     },
     response::WebResponse,
     state::AppState,
@@ -123,7 +124,14 @@ pub fn create_obj() -> Router<AppState> {
         match new_obj_for {
             crate::prisma::ObjectiveFor::User => {
                 for id in child_ids {
-                    let _ = obj_service.add_to_user(new_obj.obj_id.clone(), id).await?;
+                    let _ = obj_service
+                        .add_to_user(new_obj.obj_id.clone(), id.clone())
+                        .await?;
+
+                    let message = format!(r#"New objective {} is assigned to you"#, new_obj.name);
+                    notification_service
+                        .create_noti(id.to_string(), message.clone(), vec![])
+                        .await?;
                 }
             }
             crate::prisma::ObjectiveFor::Department => {
@@ -144,6 +152,7 @@ pub fn create_obj() -> Router<AppState> {
                             let _ = obj_service
                                 .add_to_department(new_obj.obj_id.clone(), department_id)
                                 .await?;
+                            break;
                         }
                         None => continue,
                     }
@@ -154,6 +163,21 @@ pub fn create_obj() -> Router<AppState> {
                     let _ = obj_service
                         .add_to_department(new_obj.obj_id.clone(), department_id.to_string())
                         .await?;
+                    let users = user_service
+                        .get_users(
+                            vec![user::department_id::equals(Some(department_id.clone()))],
+                            0,
+                            100,
+                        )
+                        .await?;
+
+                    let message = format!(r#"New objective {} is assigned to you"#, new_obj.name);
+
+                    for user in users {
+                        notification_service
+                            .create_noti(user.pk_user_id, message.clone(), vec![])
+                            .await?;
+                    }
                 }
                 if !child_ids.is_empty() && child_ids.first().is_some() {
                     let department = department_service

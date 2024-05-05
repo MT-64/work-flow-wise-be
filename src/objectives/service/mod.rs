@@ -2,7 +2,7 @@ use crate::key_result::model::response::{keyresult_select, KrSelect};
 use crate::prisma::file::created_at::equals;
 use crate::prisma::objective::parent_objective_id;
 use crate::prisma::objective::UncheckedSetParam;
-use crate::prisma::{department, key_result, organize, period, user};
+use crate::prisma::{self, department, key_result, organize, period, user};
 use crate::prisma::{objective_on_department, objective_on_org, objective_on_user};
 use crate::{error::ErrorResponse, helpers::id::generate_id, prisma::objective::deadline};
 use std::sync::Arc;
@@ -157,6 +157,50 @@ impl ObjectiveService {
                 department::pk_department_id::equals(department_id),
                 vec![],
             )
+            .exec()
+            .await?;
+
+        Ok(())
+    }
+    pub async fn remove_from_department(
+        &self,
+        obj_id: String,
+        department_id: String,
+    ) -> Result<(), ErrorResponse> {
+        self.db
+            .objective_on_department()
+            .delete(
+                prisma::objective_on_department::UniqueWhereParam::ObjIdDepartmentIdEquals(
+                    obj_id,
+                    department_id,
+                ),
+            )
+            .exec()
+            .await?;
+
+        Ok(())
+    }
+    pub async fn remove_from_org(
+        &self,
+        obj_id: String,
+        org_id: String,
+    ) -> Result<(), ErrorResponse> {
+        self.db
+            .objective_on_org()
+            .delete(prisma::objective_on_org::UniqueWhereParam::ObjIdOrgIdEquals(obj_id, org_id))
+            .exec()
+            .await?;
+
+        Ok(())
+    }
+    pub async fn remove_from_user(
+        &self,
+        obj_id: String,
+        user_id: String,
+    ) -> Result<(), ErrorResponse> {
+        self.db
+            .objective_on_user()
+            .delete(prisma::objective_on_user::UniqueWhereParam::ObjIdUserIdEquals(obj_id, user_id))
             .exec()
             .await?;
 
