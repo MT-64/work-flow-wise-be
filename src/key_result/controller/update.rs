@@ -55,7 +55,9 @@ use crate::{
 pub fn update_kr() -> Router<AppState> {
     async fn update_kr_handler(
         State(AppState {
-            keyresult_service, ..
+            notification_service,
+            keyresult_service,
+            ..
         }): State<AppState>,
         Path(kr_id): Path<String>,
         LoggedInUser(user): LoggedInUser,
@@ -97,6 +99,14 @@ pub fn update_kr() -> Router<AppState> {
 
         let updated_kr: KeyResultResponse =
             keyresult_service.update_kr(kr_id, changes).await?.into();
+        let message = format!(
+            r#"Key result {} have some updaed "#,
+            updated_kr.name.clone()
+        );
+        notification_service
+            .create_noti(updated_kr.name.clone(), message.clone(), vec![])
+            .await?;
+
         Ok(WebResponse::ok("Update keyresult successfully", updated_kr))
     }
     Router::new().route("/update/:kr_id", put(update_kr_handler))
@@ -134,6 +144,7 @@ pub fn update_kr() -> Router<AppState> {
 pub fn grading_kr() -> Router<AppState> {
     async fn grading_kr_handler(
         State(AppState {
+            notification_service,
             obj_service,
             keyresult_service,
             ..
@@ -244,6 +255,13 @@ pub fn grading_kr() -> Router<AppState> {
             }
             None => {}
         }
+        let message = format!(
+            r#"Key result {} have some updaed "#,
+            updated_kr.name.clone()
+        );
+        notification_service
+            .create_noti(updated_kr.name.clone(), message.clone(), vec![])
+            .await?;
 
         Ok(WebResponse::ok("Update keyresult successfully", updated_kr))
     }
