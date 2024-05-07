@@ -45,7 +45,12 @@ use crate::{
 )]
 pub fn update_obj() -> Router<AppState> {
     async fn update_obj_handler(
-        State(AppState { obj_service, .. }): State<AppState>,
+        State(AppState {
+            user_service,
+            notification_service,
+            obj_service,
+            ..
+        }): State<AppState>,
         Path(obj_id): Path<String>,
         LoggedInUser(user): LoggedInUser,
         UpdateObjRequest {
@@ -96,6 +101,16 @@ pub fn update_obj() -> Router<AppState> {
         }
 
         let updated_obj: ObjectiveResponse = obj_service.update_obj(obj_id, changes).await?.into();
+        let users = user_service
+            .get_users_by_obj(updated_obj.obj_id.clone())
+            .await?;
+        let message = format!(r#"Objective {} is updated "#, updated_obj.name.clone());
+        for user in users.iter() {
+            notification_service
+                .create_noti(user.pk_user_id.clone(), message.clone(), vec![])
+                .await?;
+        }
+
         Ok(WebResponse::ok(
             "Update objective successfully",
             updated_obj,

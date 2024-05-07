@@ -104,6 +104,13 @@ pub fn remove_from_user() -> Router<AppState> {
 
         let obj = obj_service.get_obj_by_id(obj_id).await?;
 
+        let user = user_service.get_user_by_id(user_id.clone()).await?;
+
+        let message = format!(r#"You have removed from objective {}  "#, obj.name.clone());
+        notification_service
+            .create_noti(user.pk_user_id.clone(), message.clone(), vec![])
+            .await?;
+
         // let users = user_service
         //     .get_users(vec![user::organize::equals(Some(org))], 0, 100)
         //     .await?;

@@ -40,6 +40,7 @@ pub fn create_kr() -> Router<AppState> {
         State(AppState {
             obj_service,
             keyresult_service,
+            notification_service,
             ..
         }): State<AppState>,
         CreateKrRequest {
@@ -69,8 +70,8 @@ pub fn create_kr() -> Router<AppState> {
 
         let new_kr: KeyResultResponse = keyresult_service
             .create_kr(
-                name,
-                user_id,
+                name.clone(),
+                user_id.clone(),
                 objective_id,
                 target,
                 description,
@@ -80,6 +81,10 @@ pub fn create_kr() -> Router<AppState> {
             )
             .await?
             .into();
+        let message = format!(r#"New key result {} is assigned to you"#, name);
+        notification_service
+            .create_noti(user_id, message.clone(), vec![])
+            .await?;
 
         Ok(WebResponse::created(
             "Created key result sucessfully",
