@@ -48,7 +48,7 @@ pub fn delete_obj() -> Router<AppState> {
         let users = user_service
             .get_users_by_obj(deleted_obj.pk_objective_id.clone())
             .await?;
-        let message = format!(r#"Objective {} is deleted "#, deleted_obj.name.clone());
+        let message = format!(r#"Mục tiêu {} đã được xóa"#, deleted_obj.name.clone());
         for user in users.iter() {
             notification_service
                 .create_noti(user.pk_user_id.clone(), message.clone(), vec![])

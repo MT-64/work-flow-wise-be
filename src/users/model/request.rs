@@ -244,3 +244,20 @@ impl FromRequest<AppState, Body> for AddMultipleUserToOrg {
         Ok(body)
     }
 }
+
+#[derive(Deserialize, Debug, ToSchema)]
+#[serde(rename_all = "camelCase")]
+pub struct UpdateRoleRequest {
+    pub role: Option<crate::prisma::Role>,
+}
+
+#[async_trait]
+impl FromRequest<AppState, Body> for UpdateRoleRequest {
+    type Rejection = ErrorResponse;
+
+    async fn from_request(req: Request<Body>, state: &AppState) -> Result<Self, Self::Rejection> {
+        let Json(body) = Json::<UpdateRoleRequest>::from_request(req, state).await?;
+        let UpdateRoleRequest { role } = &body;
+        Ok(body)
+    }
+}

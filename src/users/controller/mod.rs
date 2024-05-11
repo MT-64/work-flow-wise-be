@@ -10,7 +10,7 @@ use self::{
     get::{get_user, get_user_by_jwt, get_users, get_users_by_obj},
     login::login,
     profile::profile,
-    update::update_user,
+    update::{update_user, update_user_role},
 };
 
 pub mod add_to_department;
@@ -37,6 +37,7 @@ pub fn user_routes() -> Router<AppState> {
             .merge(get_user_by_jwt())
             .merge(add_to_department())
             .merge(add_multiple_to_department())
+            .merge(update_user_role())
             .merge(add_multiple_to_org())
             .merge(remove_user_department())
             .merge(admin_create_user())

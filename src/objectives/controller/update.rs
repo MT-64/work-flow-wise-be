@@ -104,7 +104,7 @@ pub fn update_obj() -> Router<AppState> {
         let users = user_service
             .get_users_by_obj(updated_obj.obj_id.clone())
             .await?;
-        let message = format!(r#"Objective {} is updated "#, updated_obj.name.clone());
+        let message = format!(r#"Mục tiêu {} đã được cập nhật"#, updated_obj.name.clone());
         for user in users.iter() {
             notification_service
                 .create_noti(user.pk_user_id.clone(), message.clone(), vec![])

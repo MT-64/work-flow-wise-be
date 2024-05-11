@@ -57,7 +57,7 @@ pub fn delete_kr() -> Router<AppState> {
     ) -> WebResult {
         ////recalculation
         let kr = keyresult_service.get_kr_by_id(kr_id.clone()).await?;
-        let message = format!(r#"Key result {} is deleted "#, kr.name.clone());
+        let message = format!(r#"Kết quả then chốt {} đã được xóa"#, kr.name.clone());
         notification_service
             .create_noti(kr.user_id.clone(), message.clone(), vec![])
             .await?;

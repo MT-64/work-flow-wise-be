@@ -51,7 +51,7 @@ pub fn add_to_user() -> Router<AppState> {
 
         let obj = obj_service.get_obj_by_id(obj_id).await?;
 
-        let message = format!(r#"New objective {} is assigned to you"#, obj.name);
+        let message = format!(r#"Mục tiêu mới {} được gán cho bạn"#, obj.name);
         notification_service
             .create_noti(user_id, message.clone(), vec![])
             .await?;
@@ -106,7 +106,7 @@ pub fn remove_from_user() -> Router<AppState> {
 
         let user = user_service.get_user_by_id(user_id.clone()).await?;
 
-        let message = format!(r#"You have removed from objective {}  "#, obj.name.clone());
+        let message = format!(r#"Bạn đã rời khỏi mục tiêu {}  "#, obj.name.clone());
         notification_service
             .create_noti(user.pk_user_id.clone(), message.clone(), vec![])
             .await?;

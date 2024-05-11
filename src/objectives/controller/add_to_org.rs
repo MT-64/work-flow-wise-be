@@ -56,7 +56,7 @@ pub fn add_to_organize() -> Router<AppState> {
             .get_users(vec![user::organize_id::equals(Some(org_id))], 0, 100)
             .await?;
 
-        let message = format!(r#"New objective {} is assigned to you"#, obj.name);
+        let message = format!(r#"Mục tiêu mới {} được gán cho bạn"#, obj.name);
 
         for user in users {
             notification_service
