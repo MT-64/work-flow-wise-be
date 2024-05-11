@@ -63,7 +63,7 @@ pub fn add_to_department() -> Router<AppState> {
             )
             .await?;
 
-        let message = format!(r#"New objective {} is assigned to you"#, obj.name);
+        let message = format!(r#"Mục tiêu mới {} được gán cho bạn"#, obj.name);
 
         for user in users {
             notification_service
@@ -130,7 +130,7 @@ pub fn remove_from_department() -> Router<AppState> {
             )
             .await?;
 
-        let message = format!(r#"You are removed from objective {} "#, obj.name);
+        let message = format!(r#"Bạn đã rời khỏi mục tiêu {} "#, obj.name);
 
         for user in users {
             notification_service
@@ -198,7 +198,7 @@ pub fn add_multiple_to_department() -> Router<AppState> {
                 )
                 .await?;
 
-            let message = format!(r#"New objective {} is assigned to you"#, obj.name);
+            let message = format!(r#"Mục tiêu mới {} được gán cho bạn"#, obj.name);
 
             for user in users {
                 notification_service

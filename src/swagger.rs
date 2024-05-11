@@ -4,7 +4,7 @@ use utoipa::{
 };
 
 use crate::users::model::request::{
-    CreateUserRequest, DeleteUserRequest, LoginRequest, UpdateUserRequest, UserQueryRequest, AddMultipleUserToDepartment, AddMultipleUserToOrg,
+    CreateUserRequest, DeleteUserRequest, LoginRequest, UpdateUserRequest, UserQueryRequest, AddMultipleUserToDepartment, AddMultipleUserToOrg, UpdateRoleRequest
 };
 
 use crate::comment::{controller::create::AddCommentToCommentRequest ,model::{CommentResponse, CommentTreeNodeResponse}};
@@ -50,6 +50,7 @@ use crate::comment;
       // User
       CreateUserRequest,
       UpdateUserRequest,
+      UpdateRoleRequest,
       DeleteUserRequest,
       LoginRequest,
       UserQueryRequest, 
@@ -102,6 +103,7 @@ use crate::comment;
     users::controller::create::create_user,
     users::controller::create::admin_create_user,
     users::controller::update::update_user,
+    users::controller::update::update_user_role,
     users::controller::delete::delete_user,
     users::controller::login::login,
     users::controller::add_to_department::add_to_department,

@@ -100,7 +100,7 @@ pub fn update_kr() -> Router<AppState> {
         let updated_kr: KeyResultResponse =
             keyresult_service.update_kr(kr_id, changes).await?.into();
         let message = format!(
-            r#"Key result {} have some updaed "#,
+            r#"Kết quả then chốt {} có sự thay đổi"#,
             updated_kr.name.clone()
         );
         notification_service
@@ -256,7 +256,7 @@ pub fn grading_kr() -> Router<AppState> {
             None => {}
         }
         let message = format!(
-            r#"Key result {} have some updaed "#,
+            r#"Kết quả then chốt {} có sự thay đổi"#,
             updated_kr.name.clone()
         );
         notification_service

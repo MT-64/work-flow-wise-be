@@ -81,7 +81,7 @@ pub fn create_kr() -> Router<AppState> {
             )
             .await?
             .into();
-        let message = format!(r#"New key result {} is assigned to you"#, name);
+        let message = format!(r#"Kết quả then chốt {} đã được gán cho bạn"#, name);
         notification_service
             .create_noti(user_id, message.clone(), vec![])
             .await?;

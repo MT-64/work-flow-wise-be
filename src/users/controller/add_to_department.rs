@@ -76,7 +76,7 @@ pub fn add_to_department() -> Router<AppState> {
             .await?;
 
         let message = format!(
-            r#"You have assign to department {}"#,
+            r#"Bạn đã tham gia vào phòng ban {}"#,
             department.name.clone()
         );
 
@@ -150,9 +150,8 @@ pub fn add_multiple_to_department() -> Router<AppState> {
         let department = department_service
             .get_department_by_id(department_id.clone())
             .await?;
-
         let message = format!(
-            r#"You have assign to department {}"#,
+            r#"Bạn đã tham gia vào phòng ban {}"#,
             department.name.clone()
         );
 
@@ -235,7 +234,7 @@ pub fn remove_user_department() -> Router<AppState> {
             .await?;
 
         let message = format!(
-            r#"You have removed from department {}"#,
+            r#"Bạn đã tham gia vào phòng ban {}"#,
             department.name.clone()
         );
 

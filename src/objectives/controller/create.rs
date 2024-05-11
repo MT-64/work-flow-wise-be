@@ -128,7 +128,7 @@ pub fn create_obj() -> Router<AppState> {
                         .add_to_user(new_obj.obj_id.clone(), id.clone())
                         .await?;
 
-                    let message = format!(r#"New objective {} is assigned to you"#, new_obj.name);
+                    let message = format!(r#"Mục tiêu mới {} được gán cho bạn"#, new_obj.name);
                     notification_service
                         .create_noti(id.to_string(), message.clone(), vec![])
                         .await?;
@@ -140,7 +140,7 @@ pub fn create_obj() -> Router<AppState> {
                         .add_to_user(new_obj.obj_id.clone(), user_id.to_string())
                         .await?;
 
-                    let message = format!(r#"New objective {} is assigned to you"#, new_obj.name);
+                    let message = format!(r#"Mục tiêu mới {} được gán cho bạn"#, new_obj.name);
                     notification_service
                         .create_noti(user_id.to_string(), message.clone(), vec![])
                         .await?;
@@ -171,7 +171,7 @@ pub fn create_obj() -> Router<AppState> {
                         )
                         .await?;
 
-                    let message = format!(r#"New objective {} is assigned to you"#, new_obj.name);
+                    let message = format!(r#"Mục tiêu mới {} được gán cho bạn"#, new_obj.name);
 
                     for user in users {
                         notification_service
