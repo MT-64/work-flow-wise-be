@@ -1,3 +1,4 @@
+use crate::prisma::objective;
 use crate::prisma::user::{self, objective_on_user};
 use crate::users::model::loggedin::LoggedInUser;
 use axum::{
@@ -53,6 +54,76 @@ pub fn delete_obj() -> Router<AppState> {
             notification_service
                 .create_noti(user.pk_user_id.clone(), message.clone(), vec![])
                 .await?;
+        }
+
+        match deleted_obj.parent_objective_id {
+            Some(ref parent_id) => {
+                let department_obj = obj_service.get_obj_by_id(parent_id.clone()).await?;
+
+                let all_user_obj = obj_service
+                    .get_objs(
+                        vec![objective::parent_objective_id::equals(Some(
+                            parent_id.clone(),
+                        ))],
+                        0,
+                        100,
+                    )
+                    .await?;
+                let mut progress_department_obj = 0.0;
+                let mut num_obj = 0.0;
+
+                for obj_user in &all_user_obj {
+                    progress_department_obj += obj_user.progress.unwrap_or(0.0);
+                    num_obj += 1.0;
+                }
+                if num_obj == 0.0 {
+                    num_obj = 1.0;
+                }
+
+                let _ = obj_service
+                    .update_obj(
+                        parent_id.clone(),
+                        vec![objective::progress::set(Some(
+                            (progress_department_obj / num_obj) as f64,
+                        ))],
+                    )
+                    .await?;
+                //// update organize objective
+                match department_obj.parent_objective_id {
+                    Some(parent_department_obj_id) => {
+                        let all_department_obj = obj_service
+                            .get_objs(
+                                vec![objective::parent_objective_id::equals(Some(
+                                    parent_department_obj_id.clone(),
+                                ))],
+                                0,
+                                100,
+                            )
+                            .await?;
+                        let mut progress_org_obj = 0.0;
+                        let mut num_department_obj = 0.0;
+
+                        for obj_department in &all_department_obj {
+                            progress_org_obj += obj_department.progress.unwrap_or(0.0);
+                            num_department_obj += 1.0;
+                        }
+
+                        if num_department_obj == 0.0 {
+                            num_department_obj = 1.0;
+                        }
+                        let _ = obj_service
+                            .update_obj(
+                                parent_department_obj_id.clone(),
+                                vec![objective::progress::set(Some(
+                                    (progress_org_obj / num_department_obj) as f64,
+                                ))],
+                            )
+                            .await?;
+                    }
+                    None => {}
+                }
+            }
+            None => {}
         }
 
         Ok(WebResponse::ok("Deleted objective successfully", ()))
