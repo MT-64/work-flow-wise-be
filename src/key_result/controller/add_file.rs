@@ -11,7 +11,7 @@ use crate::{
     helpers::validation::validation_message,
     key_result::model::{
         request::{AddFileRequest, GradingKr},
-        response::KeyResultResponse,
+        response::{FileSharedResponse, KeyResultResponse},
     },
     prisma::{
         key_result::{self, deadline},
@@ -59,14 +59,18 @@ pub fn add_file() -> Router<AppState> {
         }): State<AppState>,
         Path(kr_id): Path<String>,
         LoggedInUser(user): LoggedInUser,
-        AddFileRequest { file_path }: AddFileRequest,
+        AddFileRequest {
+            file_path,
+            virutal_path,
+        }: AddFileRequest,
     ) -> WebResult {
         let mut changes = vec![];
 
-        changes.push(key_result::file_shared::push(vec![file_path]));
+        let updated_kr: FileSharedResponse = keyresult_service
+            .add_file_to_kr(kr_id, file_path, virutal_path, changes)
+            .await?
+            .into();
 
-        let updated_kr: KeyResultResponse =
-            keyresult_service.update_kr(kr_id, changes).await?.into();
         Ok(WebResponse::ok("Add file to kr successfully", updated_kr))
     }
     Router::new().route("/add_file/:kr_id", put(add_file_handler))

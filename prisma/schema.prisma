@@ -36,7 +36,7 @@ model User {
   pagination_id      Int      @unique @default(autoincrement()) @map("pagination_id")
   first_name         String?
   last_name          String?
-  gender             Gender?   @default(Male)
+  gender             Gender?  @default(Male)
   role               Role     @default(Employee)
   introduction_brief String?
   image              String?
@@ -82,31 +82,30 @@ model Organize {
 }
 
 enum objective_metric {
-	Quantity
-	Percent
-	Time 
-	Money
+  Quantity
+  Percent
+  Time
+  Money
 }
 
 enum Achievement {
-	Achievement
-	NonAchievement
-	Exceed
-	Other
+  Achievement
+  NonAchievement
+  Exceed
+  Other
 }
 
-enum objective_for{
-	User
-	Department
-	Organize
+enum objective_for {
+  User
+  Department
+  Organize
 }
 
 model Objective {
-  pk_objective_id       String                  @id @unique 
-  period_id             String
-  parent_objective_id   String?
-  Parent_obj            Objective?               @relation("NestedObj", fields: [parent_objective_id], references: [pk_objective_id], onDelete: Cascade)
-  
+  pk_objective_id     String     @id @unique
+  period_id           String
+  parent_objective_id String?
+  Parent_obj          Objective? @relation("NestedObj", fields: [parent_objective_id], references: [pk_objective_id], onDelete: Cascade)
 
   period                Period                  @relation(fields: [period_id], references: [pk_period_id], onDelete: SetNull)
   obj_type              objective_type          @default(Other)
@@ -124,7 +123,7 @@ model Objective {
   created_at            DateTime                @default(now())
   updated_at            DateTime                @updatedAt
   deadline              DateTime
-  childObjectives             Objective[]       @relation("NestedObj")
+  childObjectives       Objective[]             @relation("NestedObj")
   KeyResult             KeyResult[]
   ObjectiveOnDepartment ObjectiveOnDepartment[]
   ObjectiveOnUser       ObjectiveOnUser[]
@@ -161,25 +160,32 @@ model OAuthStateStorage {
 }
 
 model Notification {
-  pk_notification_id String  @id @unique
+  pk_notification_id String   @id @unique
   user_id            String
   message            String
-  status             Boolean @default(false)
-  timestamp          DateTime  @default(now())
+  status             Boolean  @default(false)
+  timestamp          DateTime @default(now())
 }
 
+model FileShared {
+  id          String    @id @default(uuid())
+  fullname    String
+  virtualPath String
+  keyResultId String
+  keyResult   KeyResult @relation(fields: [keyResultId], references: [pk_kr_id])
+}
 
 model KeyResult {
   pk_kr_id String @id @map("pk_kr_id")
 
   objective_id String
-  objective   Objective @relation(fields: [objective_id], references: [pk_objective_id], onDelete: Cascade)
+  objective    Objective @relation(fields: [objective_id], references: [pk_objective_id], onDelete: Cascade)
 
   name String
 
   description String
 
-  target Float 
+  target Float
 
   progress Float @default(0)
 
@@ -189,16 +195,17 @@ model KeyResult {
 
   metric String
 
-  fileShared String[]
+  //  fileShared String[]
 
   deadline DateTime
 
   user_id String
-  user   User   @relation(fields: [user_id], references: [pk_user_id], onDelete: SetNull)
+  user    User   @relation(fields: [user_id], references: [pk_user_id], onDelete: SetNull)
 
   created_at DateTime @default(now())
 
-  updated_at DateTime @updatedAt
+  updated_at DateTime     @updatedAt
+  FileShared FileShared[]
 }
 
 model Period {

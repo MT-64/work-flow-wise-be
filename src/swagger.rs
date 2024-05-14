@@ -9,7 +9,7 @@ use crate::users::model::request::{
 
 use crate::comment::{controller::create::AddCommentToCommentRequest ,model::{CommentResponse, CommentTreeNodeResponse}};
 use crate::department::model::request::{CreateDepartmentRequest, UpdateDepartmentRequest};
-use crate::key_result::model::request::{CreateKrRequest, UpdateKrRequest, GradingKr, AddFileRequest};
+use crate::key_result::model::request::{CreateKrRequest, UpdateKrRequest, GradingKr, AddFileRequest };
 use crate::objectives::model::request::{CreateObjRequest, UpdateObjRequest};
 use crate::organize::model::request::{CreateOrganizeRequest, UpdateOrganizeRequest};
 use crate::periods::model::request::{CreatePeriodRequest, UpdatePeriodRequest};
@@ -17,12 +17,14 @@ use crate::notification::model::request::NotificationQueryRequest;
 
 use crate::department::model::response::DepartmentResponse;
 use crate::key_result::model::response::KeyResultResponse;
+use crate::key_result::model::response::FileSharedResponse;
 use crate::objectives::model::response::{ObjectiveResponse, ProgressResponse};
 use crate::organize::model::response::OrganizeResponse;
 use crate::periods::model::response::PeriodResponse;
 use crate::users::model::response::UserResponse;
 use crate::file::model::{select::File, query::FileQuery};
 use crate::notification::model::response::NotificationResponse;
+use crate::file::controller::create::FileUploadedResponse;
 
 use crate::department;
 use crate::key_result;
@@ -48,6 +50,8 @@ use crate::comment;
     schemas(
       // Requests
       // User
+      FileSharedResponse,
+      FileUploadedResponse,
       CreateUserRequest,
       UpdateUserRequest,
       UpdateRoleRequest,
@@ -143,6 +147,7 @@ use crate::comment;
     ////////// keyresult
     key_result::controller::get::get_krs,
     key_result::controller::get::get_kr,
+    key_result::controller::get::get_kr_file,
     key_result::controller::create::create_kr,
     key_result::controller::delete::delete_kr,
     key_result::controller::update::update_kr,

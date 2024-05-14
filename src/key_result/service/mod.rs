@@ -9,13 +9,14 @@ use chrono::{offset, DateTime};
 use prisma_client_rust::query_core::schema_builder::constants::filters;
 
 use crate::prisma::{
+    file_shared::{self, SetParam as FileSetParam},
     key_result::{self, SetParam, WhereParam},
     PrismaClient,
 };
 
 use crate::prisma::{objective, user};
 
-use super::model::response::{keyresult_select, KrSelect};
+use super::model::response::{file_shared_select, keyresult_select, FileSharedSelect, KrSelect};
 
 #[derive(Clone)]
 pub struct KeyResultService {
@@ -121,5 +122,50 @@ impl KeyResultService {
             .await?;
 
         Ok(deleted_kr)
+    }
+
+    pub async fn add_file_to_kr(
+        &self,
+        kr_id: String,
+        file_path: String,
+        virtual_path: String,
+        params: Vec<FileSetParam>,
+    ) -> Result<FileSharedSelect, ErrorResponse> {
+        let kr = self
+            .db
+            .key_result()
+            .find_unique(key_result::pk_kr_id::equals(kr_id.clone()))
+            .select(keyresult_select::select())
+            .exec()
+            .await?;
+
+        let fileshared = self
+            .db
+            .file_shared()
+            .create(
+                file_path,
+                virtual_path,
+                key_result::UniqueWhereParam::PkKrIdEquals(kr_id),
+                params,
+            )
+            .select(file_shared_select::select())
+            .exec()
+            .await?;
+
+        Ok(fileshared)
+    }
+    pub async fn get_files_by_kr_id(
+        &self,
+        kr_id: String,
+    ) -> Result<Vec<FileSharedSelect>, ErrorResponse> {
+        let files = self
+            .db
+            .file_shared()
+            .find_many(vec![file_shared::key_result_id::equals(kr_id)])
+            .select(file_shared_select::select())
+            .exec()
+            .await?;
+
+        Ok(files)
     }
 }

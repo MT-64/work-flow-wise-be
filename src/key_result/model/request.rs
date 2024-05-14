@@ -119,6 +119,7 @@ impl FromRequest<AppState, Body> for UpdateKrRequest {
 #[serde(rename_all = "camelCase")]
 pub struct AddFileRequest {
     pub file_path: String,
+    pub virutal_path: String,
 }
 
 #[async_trait]
@@ -129,7 +130,10 @@ impl FromRequest<AppState, Body> for AddFileRequest {
 
         // Just return no content if the body is empty
 
-        let AddFileRequest { file_path } = &body;
+        let AddFileRequest {
+            file_path,
+            virutal_path,
+        } = &body;
 
         Ok(body)
     }

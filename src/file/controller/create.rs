@@ -1,5 +1,7 @@
 use axum::{extract::State, routing::post, Router};
 use axum_typed_multipart::{FieldData, FieldMetadata};
+use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 
 use crate::{
     file::model::create::{CreateFileRequest, UploadRequest},
@@ -82,6 +84,14 @@ pub fn create_file() -> Router<AppState> {
     Router::new().route("/create", post(create_file_handler))
 }
 
+#[derive(Serialize, Deserialize, ToSchema)]
+#[serde(deny_unknown_fields)]
+#[serde(rename_all = "camelCase")]
+pub struct FileUploadedResponse {
+    pub fullname: String,
+    pub virtual_path: String,
+}
+
 #[utoipa::path(
   post,
   tag = "File_processing",
@@ -95,7 +105,7 @@ pub fn create_file() -> Router<AppState> {
     (
       status = 201,
       description = "Upload file success",
-      body = String,
+      body = FileUploadedResponse,
     ),
   )
 )]
@@ -116,11 +126,18 @@ pub fn upload_file() -> Router<AppState> {
     ) -> WebResult {
         let file_name: String = file_name.expect("Invalid file");
 
-        let (_, extension) = file_name.split_once('.').expect("Cannot get extension");
+        let (name, extension) = file_name.split_once('.').expect("Cannot get extension");
+        let old_fullpath = format!("{}.{}", name, extension);
         let new_fullpath = format!("{}.{}", generate_id(), extension.to_string());
         storage.create_file(&new_fullpath, contents).await?;
 
-        Ok(WebResponse::created("Created a new file", new_fullpath))
+        Ok(WebResponse::created(
+            "Created a new file",
+            FileUploadedResponse {
+                fullname: old_fullpath,
+                virtual_path: new_fullpath,
+            },
+        ))
     }
     Router::new().route("/upload", post(create_file_handler))
 }
