@@ -154,7 +154,7 @@ impl FromRequest<AppState, Body> for AddFileRequest {
 
         let AddFileRequest {
             file_path,
-            virutal_path,
+            virtual_path,
         } = &body;
 
         Ok(body)

@@ -61,13 +61,13 @@ pub fn add_file() -> Router<AppState> {
         LoggedInUser(user): LoggedInUser,
         AddFileRequest {
             file_path,
-            virutal_path,
+            virtual_path,
         }: AddFileRequest,
     ) -> WebResult {
         let mut changes = vec![];
 
         let updated_kr: FileSharedResponse = keyresult_service
-            .add_file_to_kr(kr_id, file_path, virutal_path, changes)
+            .add_file_to_kr(kr_id, file_path, virtual_path, changes)
             .await?
             .into();
 
