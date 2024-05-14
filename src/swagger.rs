@@ -17,6 +17,7 @@ use crate::notification::model::request::NotificationQueryRequest;
 
 use crate::department::model::response::DepartmentResponse;
 use crate::key_result::model::response::KeyResultResponse;
+use crate::key_result::model::request::UpdateKrProgressRequest;
 use crate::key_result::model::response::FileSharedResponse;
 use crate::objectives::model::response::{ObjectiveResponse, ProgressResponse};
 use crate::organize::model::response::OrganizeResponse;
@@ -53,6 +54,7 @@ use crate::comment;
       FileSharedResponse,
       FileUploadedResponse,
       CreateUserRequest,
+      UpdateKrProgressRequest,
       UpdateUserRequest,
       UpdateRoleRequest,
       DeleteUserRequest,
@@ -151,6 +153,7 @@ use crate::comment;
     key_result::controller::create::create_kr,
     key_result::controller::delete::delete_kr,
     key_result::controller::update::update_kr,
+    key_result::controller::update::update_kr_progress,
     key_result::controller::update::grading_kr,
     key_result::controller::add_file::add_file,
 

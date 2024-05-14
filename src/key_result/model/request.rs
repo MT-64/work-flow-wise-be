@@ -78,6 +78,28 @@ impl FromRequestParts<AppState> for KrQueryRequest {
         Ok(kr_query)
     }
 }
+#[derive(Deserialize, Validate, IsEmpty, ToSchema)]
+#[serde(rename_all = "camelCase")]
+pub struct UpdateKrProgressRequest {
+    pub progress: Option<f64>,
+}
+
+#[async_trait]
+impl FromRequest<AppState, Body> for UpdateKrProgressRequest {
+    type Rejection = ErrorResponse;
+    async fn from_request(req: Request<Body>, state: &AppState) -> Result<Self, Self::Rejection> {
+        let Json(body) = Json::<UpdateKrProgressRequest>::from_request(req, state).await?;
+
+        // Just return no content if the body is empty
+        if body.is_empty() {
+            return Err(ErrorResponse::NoContent);
+        }
+
+        let UpdateKrProgressRequest { progress } = &body;
+
+        Ok(body)
+    }
+}
 
 #[derive(Deserialize, Validate, IsEmpty, ToSchema)]
 #[serde(rename_all = "camelCase")]
@@ -119,7 +141,7 @@ impl FromRequest<AppState, Body> for UpdateKrRequest {
 #[serde(rename_all = "camelCase")]
 pub struct AddFileRequest {
     pub file_path: String,
-    pub virutal_path: String,
+    pub virtual_path: String,
 }
 
 #[async_trait]
