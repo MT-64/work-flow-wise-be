@@ -1,4 +1,4 @@
-use crate::{key_result::model::request::KrQueryRequest, prisma::key_result};
+use crate::{key_result::model::{request::KrQueryRequest, response::FileSharedResponse}, prisma::key_result};
 use axum::{extract::{State, Path}, routing::get, Router};
 use chrono::DateTime;
 use prisma_client_rust::query_core::schema_builder::constants::filters;
@@ -150,4 +150,40 @@ pub fn get_kr() -> Router<AppState> {
         Ok(WebResponse::ok("Get keyresult by id successfully", kr))
     }
     Router::new().route("/:kr_id", get(get_kr_handler))
+}
+
+#[utoipa::path(
+  get,
+  tag = "Key Result",
+  path = "/api/v1/kr/{kr_id}/file",
+  params(
+    ("kr_id" = String, Path, description = "Keyresult ID")
+  ),
+  responses(
+    (
+      status = 201,
+      description = "Get files by kr id",
+      body = Vec<FileSharedResponse>,
+      example = json! (
+        {
+          "code": 200,
+          "message": "Get files by id successfully",
+          "data": {
+          },
+          "error": ""
+        }
+      )
+    ),
+  )
+)]
+pub fn get_kr_file() -> Router<AppState> {
+    async fn get_kr_file_handler(
+        State(AppState { keyresult_service, .. }): State<AppState>,
+        Path(kr_id): Path<String>,
+    ) -> WebResult {
+        let files: Vec<FileSharedResponse> = keyresult_service.get_files_by_kr_id(kr_id).await?.into_iter().map(|u| u.into()).collect();
+
+        Ok(WebResponse::ok("Get keyresult by id successfully", files))
+    }
+    Router::new().route("/:kr_id/file", get(get_kr_file_handler))
 }

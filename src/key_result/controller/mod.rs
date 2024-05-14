@@ -6,7 +6,7 @@ use self::{
     add_file::add_file,
     create::create_kr,
     delete::delete_kr,
-    get::{get_kr, get_krs},
+    get::{get_kr, get_kr_file, get_krs},
     update::{grading_kr, update_kr},
 };
 
@@ -24,6 +24,7 @@ pub fn kr_routes() -> Router<AppState> {
             .merge(get_kr())
             .merge(create_kr())
             .merge(grading_kr())
+            .merge(get_kr_file())
             .merge(update_kr())
             .merge(add_file())
             .merge(delete_kr()),
