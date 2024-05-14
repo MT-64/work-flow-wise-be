@@ -11,7 +11,7 @@ use crate::{
     error::ErrorResponse,
     helpers::validation::validation_message,
     key_result::model::{
-        request::{GradingKr, UpdateKrRequest},
+        request::{GradingKr, UpdateKrProgressRequest, UpdateKrRequest},
         response::KeyResultResponse,
     },
     prisma::{
@@ -288,4 +288,70 @@ pub fn grading_kr() -> Router<AppState> {
         Ok(WebResponse::ok("Update keyresult successfully", updated_kr))
     }
     Router::new().route("/grading_kr/:kr_id", put(grading_kr_handler))
+}
+
+#[utoipa::path(
+  put,
+  tag = "Key Result",
+  path = "/api/v1/kr/update_progress/{kr_id}",
+  params(
+    ("kr_id" = String, Path, description = "Keyresult ID")
+  ),
+
+  request_body(
+    content = UpdateKrProgressRequest,
+    description = "Update keyresult request",
+  ),
+  responses(
+    (
+      status = 200,
+      description = "Updated keyresult successfully",
+      body = KeyResultResponse,
+      example = json!(
+        {
+          "code": 200,
+          "message": "Updated keyresult successfully",
+          "data": {
+                     },
+          "error": ""
+        }
+      )
+    )
+  )
+)]
+pub fn update_kr_progress() -> Router<AppState> {
+    async fn update_kr_progress_handler(
+        State(AppState {
+            notification_service,
+            keyresult_service,
+            ..
+        }): State<AppState>,
+        Path(kr_id): Path<String>,
+        LoggedInUser(user): LoggedInUser,
+        UpdateKrProgressRequest { progress }: UpdateKrProgressRequest,
+    ) -> WebResult {
+        let mut changes = vec![];
+
+        if let Some(progress) = progress {
+            changes.push(key_result::progress::set(progress));
+        }
+
+        changes.push(key_result::status::set(false));
+
+        changes.push(key_result::supervisor_grade::set(0.0));
+
+        let updated_kr: KeyResultResponse =
+            keyresult_service.update_kr(kr_id, changes).await?.into();
+
+        let message = format!(
+            r#"Kết quả then chốt {} có sự thay đổi"#,
+            updated_kr.name.clone()
+        );
+        notification_service
+            .create_noti(updated_kr.name.clone(), message.clone(), vec![])
+            .await?;
+
+        Ok(WebResponse::ok("Update keyresult successfully", updated_kr))
+    }
+    Router::new().route("/update_progress/:kr_id", put(update_kr_progress_handler))
 }
