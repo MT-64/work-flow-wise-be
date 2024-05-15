@@ -21,6 +21,7 @@ pub struct CreateKrRequest {
     pub description: String,
     pub user_id: String,
     pub objective_id: String,
+    pub expected: f64,
     pub target: f64,
     pub metric: String,
     pub progress: Option<f64>,
@@ -37,6 +38,7 @@ impl FromRequest<AppState, Body> for CreateKrRequest {
         let CreateKrRequest {
             name,
             description,
+            expected,
             user_id,
             objective_id,
             target,

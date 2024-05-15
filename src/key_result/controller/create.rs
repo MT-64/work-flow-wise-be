@@ -46,6 +46,7 @@ pub fn create_kr() -> Router<AppState> {
         CreateKrRequest {
             name,
             description,
+            expected,
             user_id,
             objective_id,
             target,
@@ -74,6 +75,7 @@ pub fn create_kr() -> Router<AppState> {
                 user_id.clone(),
                 objective_id,
                 target,
+                expected,
                 description,
                 deadline,
                 metric,

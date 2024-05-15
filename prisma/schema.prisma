@@ -172,7 +172,7 @@ model FileShared {
   fullname    String
   virtualPath String
   keyResultId String
-  keyResult   KeyResult @relation(fields: [keyResultId], references: [pk_kr_id])
+  keyResult   KeyResult @relation(fields: [keyResultId], references: [pk_kr_id], onDelete: Cascade)
 }
 
 model KeyResult {
@@ -188,6 +188,8 @@ model KeyResult {
   target Float
 
   progress Float @default(0)
+
+  expected Float 
 
   status Boolean @default(false)
 
