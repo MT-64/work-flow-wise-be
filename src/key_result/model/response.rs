@@ -20,6 +20,7 @@ key_result::select!(keyresult_select {
     deadline
     created_at
     updated_at
+    expected
     supervisor_grade
     //file_share
 });
@@ -79,7 +80,7 @@ pub struct KeyResultResponse {
     pub created_at: i64,
     pub updated_at: i64,
     pub supervisor_grade: f64,
-    //    pub file_shared: Vec<String>,
+    pub expected: f64, //    pub file_shared: Vec<String>,
 }
 
 impl From<KrSelect> for KeyResultResponse {
@@ -98,6 +99,7 @@ impl From<KrSelect> for KeyResultResponse {
             deadline,
             created_at,
             updated_at,
+            expected,
             //          file_shared,
         }: KrSelect,
     ) -> Self {
@@ -109,6 +111,7 @@ impl From<KrSelect> for KeyResultResponse {
             user_id,
             name,
             description,
+            expected,
             metric,
             target,
             progress,

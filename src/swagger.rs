@@ -26,7 +26,7 @@ use crate::users::model::response::UserResponse;
 use crate::file::model::{select::File, query::FileQuery};
 use crate::notification::model::response::NotificationResponse;
 use crate::file::controller::create::FileUploadedResponse;
-
+use crate::objectives::model::request::CheckStateObjRequest;
 use crate::department;
 use crate::key_result;
 use crate::objectives;
@@ -52,6 +52,7 @@ use crate::comment;
       // Requests
       // User
       FileSharedResponse,
+      CheckStateObjRequest,
       FileUploadedResponse,
       CreateUserRequest,
       UpdateKrProgressRequest,
