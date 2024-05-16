@@ -5,6 +5,7 @@ use crate::prisma::objective::UncheckedSetParam;
 use crate::prisma::{self, department, key_result, organize, period, user};
 use crate::prisma::{objective_on_department, objective_on_org, objective_on_user};
 use crate::{error::ErrorResponse, helpers::id::generate_id, prisma::objective::deadline};
+use prisma_client_rust::Direction;
 use std::sync::Arc;
 
 use argon2::{
@@ -49,6 +50,7 @@ impl ObjectiveService {
             .find_many(filters)
             .skip(offset)
             .take(limit)
+            .order_by(objective::expected::order(Direction::Desc))
             .select(objective_select::select())
             .exec()
             .await?;

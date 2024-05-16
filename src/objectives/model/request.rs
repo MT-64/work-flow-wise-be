@@ -150,3 +150,20 @@ impl FromRequest<AppState, Body> for AddMultipleObjToDepartment {
         Ok(body)
     }
 }
+
+#[derive(Deserialize, Debug, ToSchema)]
+#[serde(rename_all = "camelCase")]
+pub struct CheckStateObjRequest {
+    pub list_obj: Vec<String>,
+}
+
+#[async_trait]
+impl FromRequest<AppState, Body> for CheckStateObjRequest {
+    type Rejection = ErrorResponse;
+
+    async fn from_request(req: Request<Body>, state: &AppState) -> Result<Self, Self::Rejection> {
+        let Json(body) = Json::<CheckStateObjRequest>::from_request(req, state).await?;
+        let CheckStateObjRequest { list_obj } = &body;
+        Ok(body)
+    }
+}

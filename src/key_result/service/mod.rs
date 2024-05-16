@@ -6,7 +6,7 @@ use argon2::{
     Argon2, PasswordHasher,
 };
 use chrono::{offset, DateTime};
-use prisma_client_rust::query_core::schema_builder::constants::filters;
+use prisma_client_rust::{query_core::schema_builder::constants::filters, Direction};
 
 use crate::prisma::{
     file_shared::{self, SetParam as FileSetParam},
@@ -44,6 +44,7 @@ impl KeyResultService {
             .find_many(filters)
             .skip(offset)
             .take(limit)
+            .order_by(key_result::expected::order(Direction::Desc))
             .select(keyresult_select::select())
             .exec()
             .await?;
