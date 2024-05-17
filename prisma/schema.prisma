@@ -113,7 +113,7 @@ model Objective {
   supervisor_id         String
   expected              Float
   metric                objective_metric
-  achievement           Achievement?
+  achievement           Achievement?             @default(NonAchievement)
   user                  User                    @relation(fields: [supervisor_id], references: [pk_user_id], onDelete: SetNull)
   name                  String
   description           String?

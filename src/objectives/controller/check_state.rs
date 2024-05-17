@@ -95,7 +95,6 @@ pub fn check_state_obj() -> Router<AppState> {
                             ],
                         )
                         .await?;
-                    objs.push(obj);
                 }
 
                 objs.push(obj);
