@@ -66,21 +66,23 @@ pub fn check_state_obj() -> Router<AppState> {
                 }
             }
 
-            if obj.deadline.with_timezone(&Utc).timestamp_millis() > Utc::now().timestamp_millis() {
+            //// trễ hạn
+            if obj.deadline.with_timezone(&Utc).timestamp_millis() < Utc::now().timestamp_millis() {
                 let obj = obj_service
                     .update_obj(
                         obj_id.to_string(),
                         vec![
                             objective::status::set(true),
-                            objective::achievement::set(Some(
-                                crate::prisma::Achievement::NonAchievement,
-                            )),
+                            objective::achievement::set(Some(crate::prisma::Achievement::Exceed)),
                         ],
                     )
                     .await?;
+
+                objs.push(obj);
+                continue;
             }
 
-            if obj.deadline.with_timezone(&Utc).timestamp_millis() < Utc::now().timestamp_millis()
+            if obj.deadline.with_timezone(&Utc).timestamp_millis() > Utc::now().timestamp_millis()
                 || check_state == true
             {
                 if obj.progress.unwrap_or(0.0) == 100.0 {
