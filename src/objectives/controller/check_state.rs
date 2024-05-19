@@ -1,7 +1,7 @@
 use crate::{
     extractors::param::ParamId,
     objectives::model::{request::CheckStateObjRequest, response::ObjectiveResponse},
-    prisma::{key_result, objective},
+    prisma::{self, key_result, objective, Achievement},
     response::WebResponse,
     state::AppState,
     WebResult,
@@ -67,6 +67,9 @@ pub fn check_state_obj() -> Router<AppState> {
             }
 
             //// trễ hạn
+            if obj.achievement.unwrap() == Achievement::Achievement {
+                continue;
+            }
             if obj.deadline.with_timezone(&Utc).timestamp_millis() < Utc::now().timestamp_millis() {
                 let obj = obj_service
                     .update_obj(
