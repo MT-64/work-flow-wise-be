@@ -54,7 +54,6 @@ pub fn get_noties() -> Router<AppState> {
             },
             None => 10,
         };
-
         let mut filters = vec![];
 
          if let Some(user_id) = user_id {

@@ -43,6 +43,9 @@ impl NotificationService {
             .find_many(filters)
             .skip(offset)
             .take(limit)
+            .order_by(notification::timestamp::order(
+                prisma_client_rust::Direction::Desc,
+            ))
             .select(notification_select::select())
             .exec()
             .await?;
