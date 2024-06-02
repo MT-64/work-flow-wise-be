@@ -180,14 +180,26 @@ pub fn grading_kr() -> Router<AppState> {
                 500,
             )
             .await?;
+        let all_krs = keyresult_service
+            .get_krs(
+                vec![key_result::objective_id::equals(
+                    obj.pk_objective_id.clone(),
+                )],
+                0,
+                500,
+            )
+            .await?;
+
         /// calulation progress for obj where parent of kr
         let mut progress_obj = 0.0;
         let mut num_kr = 0.0;
+        for kr in &all_krs {
+            num_kr += 1.0;
+        }
         //       let mut weight = 0.0;
         for kr in &krs {
             //           progress_obj += kr.progress * kr.target;
             progress_obj += kr.progress;
-            num_kr += 1.0;
             //         weight += kr.target;
         }
         if num_kr == 0.0 {
