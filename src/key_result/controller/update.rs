@@ -172,9 +172,10 @@ pub fn grading_kr() -> Router<AppState> {
 
         let krs = keyresult_service
             .get_krs(
-                vec![key_result::objective_id::equals(
-                    obj.pk_objective_id.clone(),
-                )],
+                vec![
+                    key_result::objective_id::equals(obj.pk_objective_id.clone()),
+                    key_result::status::equals(true),
+                ],
                 0,
                 500,
             )

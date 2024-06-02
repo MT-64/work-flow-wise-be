@@ -6,6 +6,7 @@ use axum::http::{
     },
     HeaderValue, Method,
 };
+use axum_extra::headers::Origin;
 use dotenvy::var;
 use tower_http::cors::{Any, CorsLayer};
 use validator::{validate_url, ValidationError};
@@ -101,8 +102,12 @@ fn check_aws_region(aws_region: &str) -> Result<(), ValidationError> {
 }
 
 pub fn setup_cors() -> CorsLayer {
+    let origins = [
+        "http://localhost:3000".parse().unwrap(), // replace with your origins
+    ];
+
     CorsLayer::new()
-        .allow_origin(Any)
+        .allow_origin(origins)
         .expose_headers(Any)
         .allow_headers([
             ORIGIN,
